@@ -1,5 +1,27 @@
 import numpy as np
 
+
+#######################################################################
+###                 Lagrange Polynomial                            ####
+#######################################################################
+
+def lagrange(N, i, x, xi):
+    """
+    Function that evaluates Lagrange polynomial of order N and 
+    polynomial i [0, N-1] at location x at given collocation points xi
+    (not necessarily the GLL-points, but for use GLL points)
+    """
+    fac = 1
+    for j in range(-1, N):
+        if j != i:
+            fac = fac * ((x - xi[j + 1]) / (xi[i + 1] - xi[j + 1]))
+    return fac
+
+
+#######################################################################
+###                 GLL - Points and Weights                       ####
+#######################################################################
+
 def gll_pw(N):
     """
     Takes in polynomial degree and returns the points and weights
@@ -85,3 +107,7 @@ def gll_pw(N):
         raise NotImplementedError
 
     return np.array(xi), np.array(weights)
+
+#######################################################################
+###                 Next function                                  ####
+#######################################################################
