@@ -1,4 +1,4 @@
 # VERSEM
 
-Initial, empty, README, for the VERsatile Spectral Element Method.
+Initial, empty README for the VERsatile Spectral Element Method.
 
