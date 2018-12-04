@@ -24,7 +24,7 @@ def lagrange(N, i, x, xi):
 
 def gll_pw(N):
     """
-    Takes in polynomial degree and returns the points and weights
+    Takes in polynomial degree and returns the (N+1) points and weights
     Returns GLL (Gauss Lobato Legendre module with collocation points and
     weights)
     """
