@@ -2,6 +2,8 @@
 #
 #
 
+
+
 # Initializing installation
 init:
 	pip install -r requirements.txt
@@ -9,6 +11,11 @@ init:
 # Testing installation
 test:
 	py.test tests
+
+# Make Documentation
+docs:
+	doxygen
+	(cd docs/latex; make pdf) 
 
 
 .PHONY: init test
