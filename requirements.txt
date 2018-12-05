@@ -4,6 +4,7 @@ numpy
 
 # Documetation
 sphinx
+sphinx_rtd_theme
 
 # Testing
 pytest

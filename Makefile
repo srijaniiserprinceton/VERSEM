@@ -2,7 +2,7 @@
 #
 #
 
-all: test
+all: init test
 
 # Initializing installation
 init:
