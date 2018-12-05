@@ -1,2 +1,5 @@
 ## Requirements without version specifiers:
 numpy
+pytest
+py
+pluggy
