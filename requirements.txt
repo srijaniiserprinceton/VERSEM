@@ -1,5 +1,11 @@
 ## Requirements without version specifiers:
 numpy
+
+
+# Documetation
+sphinx
+
+# Testing
 pytest
 py
 pluggy
