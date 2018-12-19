@@ -19,6 +19,7 @@ connect = nc.variables['connect1']
 # Print coordinates
 #print(X[:],Z[:],connect[:])
 
+
 # Plotting the mesh
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection

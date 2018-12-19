@@ -37,7 +37,7 @@ class TestGLL(unittest.TestCase):
         xi, weights = src.gll_pw(N)
         
         # Testing the output of lagrange
-        self.assertEqual(src.lagrange(N,0,-0.5,xi),0.75)
+        self.assertEqual(src.lagrange(0,-0.5,xi),0.75)
 
 
 
