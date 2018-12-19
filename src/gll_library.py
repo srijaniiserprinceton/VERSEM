@@ -5,6 +5,51 @@ import numpy as np
 ###                 Lagrange Polynomial                            ####
 #######################################################################
 
+
+
+class LagrangePoly1D(object):                                               
+    """Callable lagrange interpolator object.                                      
+                                                                        
+    Example usage: to construct the lagrange polynomial 
+    l_0^1(x) =  and evaluate p(3):                                               
+                                                                        
+    p = Polynomial(1,[-1 1])                                           
+                                                                        
+    p(3)                                                                
+                                                                        
+    """
+    pass
+
+    def __init__(self, degree, xi):                                         
+        """ """
+         
+        self._degree = degree
+        self._xi = xi
+                                                                        
+    def _f(self,i):                                                     
+        """Calculation of the i-th lagrange polynomial of 
+        degree <self._degree>.
+        """
+        fac = 1
+        for j in range(-1, self._degree):
+            if j != i:
+                fac = fac * ((x - xi[j + 1]) / (xi[i + 1] - xi[j + 1]))
+        return fac
+        
+
+    def _df(self,x):
+        """derivative of the lagrange polynomial"""
+        pass
+                                                   
+
+    # Instances of classes that have a defined __call__ method are      
+    # themselves callable, as if they were functions                    
+    def __call__(self, x):                                              
+        return self._f(x)          
+
+
+
+
 def lagrange(N, i, x, xi):
     """
     Function that evaluates Lagrange polynomial of order N and 
