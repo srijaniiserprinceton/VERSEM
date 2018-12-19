@@ -95,7 +95,10 @@ def gll_pw(N):
     # Initialization of integration weights and collocation points
     # [xi, weights] =  gll(N)
     # Values taken from Diploma Thesis Bernhard Schuberth
-    if N == 2:
+    if N == 1:
+        xi = [-1,1]
+        weights = [1,1]
+    elif N == 2:
         xi = [-1.0, 0.0, 1.0]
         weights = [0.33333333, 1.33333333, 0.33333333]
     elif N == 3:

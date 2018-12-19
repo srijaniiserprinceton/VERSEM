@@ -34,17 +34,25 @@ def readEx(name):
 def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
     """mesh_interp(X,Y,Z,connect,ngllx,nglly)
 
-    Function takes in coordinates of a meshgrid and its connectivity 
+    Function takes in coordinates of meshgrid and its connectivity 
     matrix. Then, it interpolates the GLL points onto the global grid 
     and efines the numbering for the new found set of points.
     """
     
     # Number of elements from the number of rows of connectivity matrix
-    nel,__ = connect.shape
+    nel,Nn = connect.shape
 
     # Loop over elements to interpolate GLL points 
-    #for i in range(nel):
+    # for i in range(nel)
+    
+    # Safe shape function values in transform array
+    tran
 
+    # Counter to find indeces in 
+    '''for i in range(ngllx):
+        for j in range(nglly):
+    '''
+    
 
 
 

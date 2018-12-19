@@ -28,8 +28,21 @@ class TestGLL(unittest.TestCase):
 
     
     def testLagrange(self):
-        """ Tests lagrange() from the gll_library"""
+        """ Tests lagrange() from the gll_library
+        First Test is first order, second test is second order polynomial
+        """
         
+        ####### 1 ########
+        # Setting Order
+        N = 1
+        
+        # Getting GLL Points and weights
+        xi, weights = src.gll_pw(N)
+        
+        # Testing the output of lagrange
+        self.assertEqual(src.lagrange(0,-0.5,xi),0.75) 
+
+        ####### 2 ########
         # Setting Order
         N = 2
 
@@ -37,12 +50,32 @@ class TestGLL(unittest.TestCase):
         xi, weights = src.gll_pw(N)
         
         # Testing the output of lagrange
-        self.assertEqual(src.lagrange(0,-0.5,xi),0.75)
+        self.assertEqual(src.lagrange(0,-0.5,xi),0.375)
+        
 
     
     def testLagrange2D(self):
-        """ Tests lagrange() from the gll_library"""
+        """ Tests lagrange() from the gll_library
+        First Test is first order, second test is second order polynomial
+        """
+        ###### 1 ########
+        # Setting Order
+        N = 1
+
+        # Getting GLL Points and weights
+        xi,  weights = src.gll_pw(N)
+        eta, weights = src.gll_pw(N)
         
+        # Testing the output of lagrange
+        # coordinate is (x,y)=(-.5,.5) and degree of both is 1 and the
+        # polynomial number is 0 of both: Should be 1 at (-1,-1) and 
+        # -0.046875 at (-.5,5).
+        self.assertEqual(src.lagrange2D(0,-1,xi,0,-1,eta),1)
+        self.assertEqual(src.lagrange2D(1,-.5,xi,0,.5,eta),0.0625)
+
+
+
+        ####### 2 ########
         # Setting Order
         N = 2
 
