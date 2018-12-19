@@ -43,6 +43,8 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
     nel,__ = connect.shape
 
     # Loop over elements to interpolate GLL points 
+    #for i in range(nel):
+
 
 
 

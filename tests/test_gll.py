@@ -27,7 +27,7 @@ class TestGLL(unittest.TestCase):
         np.testing.assert_array_almost_equal(weights,np.array([1/3,4/3,1/3]))
 
     
-    def testLagrangePoly(self):
+    def testLagrange(self):
         """ Tests lagrange() from the gll_library"""
         
         # Setting Order
@@ -38,6 +38,25 @@ class TestGLL(unittest.TestCase):
         
         # Testing the output of lagrange
         self.assertEqual(src.lagrange(0,-0.5,xi),0.75)
+
+    
+    def testLagrange2D(self):
+        """ Tests lagrange() from the gll_library"""
+        
+        # Setting Order
+        N = 2
+
+        # Getting GLL Points and weights
+        xi,  weights = src.gll_pw(N)
+        eta, weights = src.gll_pw(N)
+        
+        # Testing the output of lagrange
+        # coordinate is (x,y)=(-.5,.5) and degree of both is 1 and the
+        # polynomial number is 0 of both: Should be 1 at (-1,-1) and 
+        # -0.046875 at (-.5,5).
+        self.assertEqual(src.lagrange2D(0,-1,xi,0,-1,eta),1)
+        self.assertEqual(src.lagrange2D(0,-.5,xi,0,.5,eta),-0.046875)
+
 
 
 

@@ -52,25 +52,32 @@ class LagrangePoly1D(object):
 
 def lagrange(i, x, xi):
     """
-    Function that evaluates Lagrange polynomial of order N and 
-    polynomial i [0, N-1] at location x at given collocation points xi
-    (not necessarily the GLL-points, but for use GLL points)
+    Function that evaluates Lagrange polynomial of order N (len(xi)-1) 
+    and polynomial i [0, N-1] at location x at given collocation points
+    xi (not necessarily the GLL-points).
     """
     fac = 1
-    for j in range(-1, len(xi)-1):
+    
+    for j in range(0, len(xi)):
         if j != i:
-            fac = fac * ((x - xi[j + 1]) / (xi[i + 1] - xi[j + 1]))
+            fac = fac * ((x - xi[j]) / (xi[i] - xi[j]))
     return fac
 
 
 
 
-def lagrange2D(N):
-    """lagrange2D(N)
+def lagrange2D(i,x,xi,j,y,eta):
+    """lagrange2D(i,x,xi,j,y,eta)
+    
+    calculates the 2D lagrange polynomial given collocation point sets
+    xi and eta the coordinate x,y, and the polynomial numbers i,j
+    
+    i, x, xi are the parameters for the polynomial in one direction and 
+    j, y, eta the parameters for the other direction in orthogonal space
+
     """
-    pass
 
-
+    return lagrange(i,x,xi)*lagrange(j,y,eta)   
 
 
 
