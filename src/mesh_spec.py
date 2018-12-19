@@ -7,7 +7,7 @@ import netCDF4
 
 # Import GLL library to get the lagrange polynomials for interpolation
 # of the grid
-import gll_library
+import gll_library as gll
 
 
 def readEx(name):
@@ -38,20 +38,59 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
     matrix. Then, it interpolates the GLL points onto the global grid 
     and efines the numbering for the new found set of points.
     """
-    
+    pass
     # Number of elements from the number of rows of connectivity matrix
     nel,Nn = connect.shape
-
-    # Loop over elements to interpolate GLL points 
-    # for i in range(nel)
     
-    # Safe shape function values in transform array
-    tran
+    # Number of points per side
+    Nside = np.round(np.sqrt(Nn))
 
-    # Counter to find indeces in 
-    '''for i in range(ngllx):
-        for j in range(nglly):
-    '''
+    # Local control points
+    xi_control ,__ = gll.gll_pw(Nside-1) # -1 since gll_pw takes in polynomial degree
+
+
+    # Node setup in mesh file 
+    #      3----4
+    #      |    |
+    #      |    |
+    #      2----1
+    # Local number of the lagrange polynomials for the control points
+    # entirely dependent on numbering of the 
+    if Nn == 4
+        polynum  = np.array([[1,0],[0,0],[0,1],[1,1]])
+    elif Nn == 9
+        polynum  = np.array([[2,0],[0,0],[0,2],[2,2],\
+                            [1,0],[0,1],[1,2],[2,1],[1,1]])
+         
+    
+    # Save shape function values in transform array
+    gll_shape_matrix = np.zeros(ngllx,nglly,Nn)
+
+
+    # GLL Points
+    xi ,__ = gll.gll_pw(Nside-1) # -1 since gll_pw takes in polynomial degree
+    eta ,__ = gll.gll_pw(Nside-1) # -1 since gll_pw takes in polynomial degree
+
+    # Counter to find local indeces
+    index = np.zeros(ngllx*nglly,1)
+
+    # Loop over local GLL points
+    # The loop order just switch for simplified numbering later on
+    # primary index is x overarching y
+    for j in range(nglly):
+        for i in range(ngllx):
+            
+            # Calculate each control point's shape function at each GLL
+            # point
+            for k in range(np.sqrt(Nn)):
+                gll_shape_matrix[i,j,k] = \
+                        gll.lagrange2D( polynum[k,0],xi[i],xi_control,\
+                                        polynum[k,1],eta[j],xi_control)
+
+    # Calculate GLL Points for the first element:
+    
+
+            
     
 
 
@@ -66,14 +105,13 @@ if __name__ == "__main__":
 
 
     X,Y,Z,connect = readEx('../input/RectMesh.e')
-    mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
+    #mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
 
-    '''
+    
 
    
     print(X)
     print(Z)
     print(connect)
-    '''
 
 
