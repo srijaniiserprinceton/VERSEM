@@ -49,6 +49,7 @@ class LagrangePoly1D(object):
 
 
 
+af
 
 def lagrange(i, x, xi):
     """
