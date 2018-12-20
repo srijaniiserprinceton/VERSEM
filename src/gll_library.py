@@ -49,8 +49,6 @@ class LagrangePoly1D(object):
 
 
 
-af
-
 def lagrange(i, x, xi):
     """
     Function that evaluates Lagrange polynomial of order N (len(xi)-1) 
