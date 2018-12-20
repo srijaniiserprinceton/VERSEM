@@ -38,9 +38,9 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
 
     Function takes in coordinates of meshgrid and its connectivity 
     matrix. Then, it interpolates the GLL points onto the global grid 
-    and efines the numbering for the new found set of points.
+    and defines the numbering for the new found set of points.
     """
-    pass
+
     # Number of elements (nel) from the number of rows of connectivity 
     # matrix and number of control points (Nn) from the columns
     nel,Nn = connect.shape
@@ -68,9 +68,8 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
         polynum  = np.array([[2,0],[0,0],[0,2],[2,2],\
                             [1,0],[0,1],[1,2],[2,1],[1,1]])
          
-    
-    # Save shape function values in transform array
-    gll_shape_matrix = np.zeros([ngllx*nglly,Nn])
+
+
 
     # GLL Points
     xi ,__ = gll.gll_pw(ngllx-1)  # points in x direction to be interpolated
@@ -82,8 +81,8 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
     # Total number of refined GLL points
     NN = ngllx*nglly
     
-    # Counter to find local indeces
-    index = np.zeros([NN,1])
+    # Save shape function values in transform array
+    gll_shape_matrix = np.zeros([NN,Nn])
 
     # Loop over local GLL points
     # GLL indexing and coordinates
@@ -113,83 +112,100 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
 
     # Empty connectivity array
     gll_connect = np.zeros([nel,NN])
-    tol = 1e-12
+    tol = 1e-10
     
     for i in range(nel):
         
 
         # Calculate global GLL coordinates for 1 element:
-        glob_gll = np.array([gll_shape_matrix @ X[connect[0,:]].T, \
-                             gll_shape_matrix @ Z[connect[0,:]].T]).T
+        glob_gll = np.array([gll_shape_matrix @ X[connect[i,:]].T, \
+                             gll_shape_matrix @ Z[connect[i,:]].T]).T
+            
         
-        
-        if i == 1: 
+        if i == 0: 
             # Create new element coordinates with NN number of nodes
             gll_coordinates   = glob_gll
+            glob_gll_test     = glob_gll
             gll_connect[i,:]  = np.arange(0,NN)
         
-        else    
+        else: 
                 
             for j in range(NN):
                 """Looping over variable to check whether there is 
                 overlap between the elements"""
-                
+
                 # Check whether coordinate exists already
-                ind = np.where(\
-                        np.abs(np.gll_coordinates[:,0]-glob_gll[j,0])<tol && \
-                        np.abs(np.gll_coordinates[:,1]-glob_gll[j,1])<tol)
-                
+                xbool = np.logical_and(\
+                        np.abs(gll_coordinates[:,0]-glob_gll[j,0])<tol,\
+                        np.abs(gll_coordinates[:,1]-glob_gll[j,1])<tol) 
+
+                temp = np.where(xbool)
+                ind = temp[0]
                 # if it doesnt exist
-                if ind.size==0
+                if ind.size==0:
                     # append new coordinates to global data set 
-                    np.append(gll_coordinates, glob_gll[j,:],axis=0)
+                    gll_coordinates = np.append(\
+                                gll_coordinates, \
+                                np.array([glob_gll[j,:]]),axis=0)
                     
                     # numbering at highest recent number +1
                     gll_connect[i,j] = np.amax(gll_connect) + 1
                     
                 # if it already exists
-                else
+                else:
                     # do NOT append a new coordinate, but use index for 
                     # numbering purpose
                     gll_connect[i,j] = ind
+    
 
-        
-                
+    return (gll_coordinates,gll_connect)
 
-    print(glob_gll)
-    print(connect[0,:])        
-    print(X)
-    print(Z)
-    print(connect)
-    plt.figure(1)
-    plt.scatter(glob_gll[:,0],glob_gll[:,1], marker='x')
-    plt.scatter(X[connect[0,:]],Z[connect[0,:]],marker='o')
-    plt.show()
-
-    plt.figure(2)
-    plt.
-
-
-
-
-if __name__ == "__main__":
-    """printing the connect matrix if called
-    f the standard mesh
+def test_interp():
+    """test_interp()
+    
+    Test the functions of this suite and plots them subsequently.
     """
+    
     ngllx = 4
     ngllz = 4
 
 
     X,Y,Z,connect = readEx('../input/RectMesh.e')
-    print(X)
-    print(Z)
-    print(connect)
+    #print(X)
+    #print(Z)
+    #print(connect)
     
-    mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
+    gll_coordinates, gll_connect = mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
 
+    plt.figure(1)
+    # GLL Points
+    plt.scatter(gll_coordinates[gll_connect[0,:],0],\
+                gll_coordinates[gll_connect[0,:],1], marker='x')
+    # Control Points
+    plt.scatter(X[connect[0,:]],Z[connect[0,:]],marker='o')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend(['GLL Points', 'Control Points'])
+    plt.title('Values for Element 1')
+
+
+    plt.figure(2)
+    # GLL points
+    plt.scatter(gll_coordinates[:,0],gll_coordinates[:,1],marker='x')
+    # Control Points
+    plt.scatter(X[:],Z[:],marker='o')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend(['GLL Points', 'Control Points'])
+    plt.title('Original Mesh and interpolated GLL points')
+    plt.show()
+
+
+
+if __name__ == "__main__":
+    test_interp()
     
 
-   
 
 
 
