@@ -1,11 +1,15 @@
 """This is script contains functions used to get from a quadrilateral
 mesh to a Spectral-Element mesh. File for mesh object creation?"""
 
-
-import matplotlib.pyplot as plt
+# Necessary for calculation and import of exodus file
 import numpy as np
 import netCDF4
 
+# Plotting
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
+import matplotlib.pyplot as plt
+import matplotlib
 
 # Import GLL library to get the lagrange polynomials for interpolation
 # of the grid
@@ -75,9 +79,6 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
     xi ,__ = gll.gll_pw(ngllx-1)  # points in x direction to be interpolated
     eta ,__ = gll.gll_pw(nglly-1) # points in y direction to be interpolated
 
-    print(xi)
-    print(eta)
-    
     # Total number of refined GLL points
     NN = ngllx*nglly
     
@@ -104,14 +105,12 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
                     gll.lagrange2D( polynum[k,0],local_coord[i,0],xi_control,\
                                     polynum[k,1],local_coord[i,1],xi_control)
    
-                    
-    print(gll_shape_matrix)
     
     #######
     # Find global GLL points and numbering for EVERY element:
 
     # Empty connectivity array
-    gll_connect = np.zeros([nel,NN])
+    gll_connect = np.zeros([nel,NN],dtype='int')
     tol = 1e-10
     
     for i in range(nel):
@@ -160,47 +159,95 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
 
     return (gll_coordinates,gll_connect)
 
+def plot_elements(X,Y,connect,gll_coordinates):
+    """plot_elements()
+
+    This function plots the GLL points as well as control points in 2D
+
+    """
+    print(connect.shape)
+    ##########
+    # Calculate the Centre of elements
+    try:
+        nel,__ = connect.shape
+    except ValueError:
+        nel = 1
+        connect = np.array([connect]) 
+    
+    # Finding element centres
+    el_num_coor = np.zeros([nel,2])
+    for i in range(nel):
+        el_num_coor[i,0] = np.mean(X[connect[i,:]])
+        el_num_coor[i,1] = np.mean(Y[connect[i,:]])
+
+    
+    # Creating polygons for each element
+    xy = np.array([X[:], Y[:]]).T
+    patches = []
+    for coords in xy[connect[:]]:
+        quad = Polygon(coords, True)
+        patches.append(quad)
+    
+    ##########
+    # Plotting 
+    fig,ax = plt.subplots()
+
+    # Plot Polygon Patches
+    colors = 100 * np.random.rand(len(patches))
+    p = PatchCollection(patches, cmap=matplotlib.cm.coolwarm,edgecolor="k", alpha=0.4)
+    p.set_array(np.array(colors))
+    ax.add_collection(p)
+
+    # GLL Points
+    ax.scatter(gll_coordinates[:,0],\
+            gll_coordinates[:,1],50,color="k", marker="x")
+    # Control Points
+    ax.scatter(X, Y, 100, marker="o",
+                          edgecolor="k",
+                          color="None",
+                          linewidth=2)
+    # Plot element number
+    for i in range(nel):    
+        ax.text(el_num_coor[i,0], el_num_coor[i,1], "{0:d}".format(i+1),size=8,
+             ha="center", va="center",
+             bbox=dict(boxstyle="round",
+                       ec=(1., 0.5, 0.5),
+                       fc=(1., 0.8, 0.8),
+                       )
+             )
+    plt.xlabel('x')
+    plt.ylabel('y')
+    ax.legend(['GLL Points', 'Control Points'])
+    plt.title('Numbered elements, Nodes and GLL points')
+    
+
 def test_interp():
     """test_interp()
     
     Test the functions of this suite and plots them subsequently.
     """
     
-    ngllx = 4
-    ngllz = 4
+    ngllx = 5
+    ngllz = 5
 
 
     X,Y,Z,connect = readEx('../input/RectMesh.e')
     #print(X)
     #print(Z)
     #print(connect)
-    
+    #nel,__ = connect[0,:].shape 
+    #print(nel)
     gll_coordinates, gll_connect = mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
+    
+    # Plotting First Element
+    plot_elements(X[connect[0,:]],
+            Z[connect[0,:]],connect[0,:],
+            gll_coordinates[gll_connect[0,:],:]) 
+    
+    # Plotting All elements
+    plot_elements(X,Z,connect,gll_coordinates)
 
-    plt.figure(1)
-    # GLL Points
-    plt.scatter(gll_coordinates[gll_connect[0,:],0],\
-                gll_coordinates[gll_connect[0,:],1], marker='x')
-    # Control Points
-    plt.scatter(X[connect[0,:]],Z[connect[0,:]],marker='o')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.legend(['GLL Points', 'Control Points'])
-    plt.title('Values for Element 1')
-
-
-    plt.figure(2)
-    # GLL points
-    plt.scatter(gll_coordinates[:,0],gll_coordinates[:,1],marker='x')
-    # Control Points
-    plt.scatter(X[:],Z[:],marker='o')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.legend(['GLL Points', 'Control Points'])
-    plt.title('Original Mesh and interpolated GLL points')
     plt.show()
-
-
 
 if __name__ == "__main__":
     test_interp()
