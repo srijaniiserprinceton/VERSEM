@@ -165,22 +165,21 @@ def plot_elements(X,Y,connect,gll_coordinates):
     This function plots the GLL points as well as control points in 2D
 
     """
-    print(connect.shape)
-    ##########
-    # Calculate the Centre of elements
+    # Number of elements, catch shape function error with one element 
     try:
         nel,__ = connect.shape
     except ValueError:
         nel = 1
         connect = np.array([connect]) 
     
-    # Finding element centres
+    ##########
+    # Calculate the Centre of elements
     el_num_coor = np.zeros([nel,2])
     for i in range(nel):
         el_num_coor[i,0] = np.mean(X[connect[i,:]])
         el_num_coor[i,1] = np.mean(Y[connect[i,:]])
 
-    
+    ##########
     # Creating polygons for each element
     xy = np.array([X[:], Y[:]]).T
     patches = []
@@ -200,9 +199,15 @@ def plot_elements(X,Y,connect,gll_coordinates):
 
     # GLL Points
     ax.scatter(gll_coordinates[:,0],\
-            gll_coordinates[:,1],50,color="k", marker="x")
+            gll_coordinates[:,1],15,color="k", marker="x")
     # Control Points
-    ax.scatter(X, Y, 100, marker="o",
+    # alpha fill
+    ax.scatter(X, Y, 50, marker="o",
+                          edgecolor="None",
+                          color="k",
+                          linewidth=2,alpha=0.3)
+    # outline
+    ax.scatter(X, Y, 50, marker="o",
                           edgecolor="k",
                           color="None",
                           linewidth=2)
