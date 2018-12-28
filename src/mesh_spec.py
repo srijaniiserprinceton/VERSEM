@@ -243,7 +243,9 @@ def test_interp():
     #nel,__ = connect[0,:].shape 
     #print(nel)
     gll_coordinates, gll_connect = mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
-    
+
+
+    print(gll_connect[-1,:])
     # Plotting First Element
     plot_elements(X[connect[0,:]],
             Z[connect[0,:]],connect[0,:],
