@@ -159,32 +159,59 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
 
     return (gll_coordinates,gll_connect)
 
-def plot_elements(X,Y,connect,gll_coordinates,num_o_el='all'):
-    """plot_elements(X,Y,connect,gll_coordinates,num_o_el='all')
+def plot_elements(X,Y,connect,gll_coordinates,gll_connect,\
+                    num_o_el="all",plot_el_num="no",plot_node_num="no",\
+                    plot_axis="yes"):
+    """plot_elements(X,Y,connect,gll_coordinates,gll_connect,
+                    num_o_el="all",plot_el_num="no",plot_node_num="no"):
     
     This function plots the GLL points as well as control points in 2D
+
     INPUT:
         X,Y      = 1xN vectors with node coordinates
         connect  = connectivity matrix depending on the number of GLL 
                    points, ([total number of elements] X [GLL^2])
         num_o_el = number of elements to be plotted, default is string 
                    valued 'all', set to number small
+        plot_el_num = default is "no", change to "yes" if element numbers 
+                      should be plotted
+        plot_node_num = default is "no", change to "yes" if node numbers 
+                      should be plotted
+        plot_axis = default is "yes", if you want to omit axes 
+                    set to "no" 
     OUTPUT:
         A figure plotting the 'num_o_el' 2D elements
 
 
     """
-    # Number of elements, catch shape function error with one element 
-    try:
-        nel,__ = connect.shape
-    except ValueError:
-        nel = 1
-        connect = np.array([connect]) 
     
+    # Change matrices depending on the number of elements to be printed
+    if num_o_el=="all":
+        # Number of elements, catch shape function error with one element 
+        num_o_el,__ = connect.shape
+    
+    else:
+        ## Control point change
+        # Connectivity matrix 
+        connect = connect[0:num_o_el,:]
+        # number of used coordinates
+        num_o_coor_n = np.max(connect)+1
+        X = X[0:num_o_coor_n]
+        Y = Y[0:num_o_coor_n]
+        
+        ## GLL point change
+        # Connectivity matrix
+        gll_connect = gll_connect[0:num_o_el,:]
+        # number of used coordinates
+        num_o_coor_gll = np.max(gll_connect)+1
+        gll_coordinates= gll_coordinates[0:num_o_coor_gll,:] 
+
+        
+        
     ##########
     # Calculate the Centre of elements
-    el_num_coor = np.zeros([nel,2])
-    for i in range(nel):
+    el_num_coor = np.zeros([num_o_el,2])
+    for i in range(num_o_el):
         el_num_coor[i,0] = np.mean(X[connect[i,:]])
         el_num_coor[i,1] = np.mean(Y[connect[i,:]])
 
@@ -220,19 +247,35 @@ def plot_elements(X,Y,connect,gll_coordinates,num_o_el='all'):
                           edgecolor="k",
                           color="None",
                           linewidth=2)
+    
     # Plot element number
-    for i in range(nel):    
-        ax.text(el_num_coor[i,0], el_num_coor[i,1], "{0:d}".format(i+1),size=8,
-             ha="center", va="center",
-             bbox=dict(boxstyle="round",
-                       ec=(1., 0.5, 0.5),
-                       fc=(1., 0.8, 0.8),
-                       )
-             )
+    if plot_el_num=="yes":
+        # Plot element number
+        for i in range(num_o_el):    
+            ax.text(el_num_coor[i,0], el_num_coor[i,1], "{0:d}".format(i+1),size=8,
+                 ha="right", va="top",
+                 bbox=dict(boxstyle="round",
+                           ec=(1., 0.5, 0.5),
+                           fc=(1., 0.8, 0.8),
+                           )
+                 )
+
+    # Plot element number
+    if plot_node_num=="yes":
+        # Plot element number
+        for i in range(num_o_coor_gll):    
+            ax.text(gll_coordinates[i,0], \
+                    gll_coordinates[i,1], "{0:d}".format(i+1),size=8,
+                    ha="left", va="bottom")
+
     plt.xlabel('x')
     plt.ylabel('y')
-    ax.legend(['GLL Points', 'Control Points'])
-    plt.title('Numbered elements, Nodes and GLL points')
+    plt.axis('equal')
+    if plot_axis=="no":
+        plt.axis("off")
+    else:
+        ax.legend(['GLL Points', 'Control Points'])
+        plt.title('Numbered elements, Nodes and GLL points')
     
 
 def test_interp():
@@ -246,41 +289,22 @@ def test_interp():
 
 
     X,Y,Z,connect = readEx('../input/RectMesh.e')
-    #print(X)
-    #print(Z)
-    #print(connect)
-    #nel,__ = connect[0,:].shape 
-    #print(nel)
     gll_coordinates, gll_connect = mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
-    
 
-
-    # number of elements to be printed
-    num_o_el = 1
-    connect1 = connect[0:num_o_el,:]
-    print(connect1)
-    # number of used coordinates
-    num_o_coor = np.max(connect1)+1
-    X1 = X[0:num_o_coor]
-    Y1 = Y[0:num_o_coor]
-    Z1 = Z[0:num_o_coor]
-    print(X1)
-    gll_coordinates1,gll_connect1 = mesh_interp2D(X1,Y1,Z1,connect1,ngllx,ngllz)
-
-
-
-    print(gll_connect[-1,:])
-    # Plotting First Element
-    plot_elements(X[connect[0,:]],
-            Z[connect[0,:]],connect[0,:],
-            gll_coordinates[gll_connect[0,:],:]) 
-    
+    # Plotting 1 element
+    plot_elements(X,Z,connect,gll_coordinates,gll_connect,num_o_el=1,\
+                                plot_el_num="yes",plot_node_num="yes")
 
     # Plotting 2 elements
-    plot_elements(X1,Z1,connect1,gll_coordinates1)
+    plot_elements(X,Z,connect,gll_coordinates,gll_connect,num_o_el=2,\
+                                plot_el_num="yes",plot_node_num="yes",\
+                                plot_axis = "no")
+                           
+
 
     # Plotting All elements
-    plot_elements(X,Z,connect,gll_coordinates)
+    #plot_elements(X,Z,connect,gll_coordinates,gll_connect)
+
 
     plt.show()
 
