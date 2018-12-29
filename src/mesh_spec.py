@@ -159,10 +159,19 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
 
     return (gll_coordinates,gll_connect)
 
-def plot_elements(X,Y,connect,gll_coordinates):
-    """plot_elements()
-
+def plot_elements(X,Y,connect,gll_coordinates,num_o_el='all'):
+    """plot_elements(X,Y,connect,gll_coordinates,num_o_el='all')
+    
     This function plots the GLL points as well as control points in 2D
+    INPUT:
+        X,Y      = 1xN vectors with node coordinates
+        connect  = connectivity matrix depending on the number of GLL 
+                   points, ([total number of elements] X [GLL^2])
+        num_o_el = number of elements to be plotted, default is string 
+                   valued 'all', set to number small
+    OUTPUT:
+        A figure plotting the 'num_o_el' 2D elements
+
 
     """
     # Number of elements, catch shape function error with one element 
@@ -243,6 +252,21 @@ def test_interp():
     #nel,__ = connect[0,:].shape 
     #print(nel)
     gll_coordinates, gll_connect = mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
+    
+
+
+    # number of elements to be printed
+    num_o_el = 1
+    connect1 = connect[0:num_o_el,:]
+    print(connect1)
+    # number of used coordinates
+    num_o_coor = np.max(connect1)+1
+    X1 = X[0:num_o_coor]
+    Y1 = Y[0:num_o_coor]
+    Z1 = Z[0:num_o_coor]
+    print(X1)
+    gll_coordinates1,gll_connect1 = mesh_interp2D(X1,Y1,Z1,connect1,ngllx,ngllz)
+
 
 
     print(gll_connect[-1,:])
@@ -251,6 +275,10 @@ def test_interp():
             Z[connect[0,:]],connect[0,:],
             gll_coordinates[gll_connect[0,:],:]) 
     
+
+    # Plotting 2 elements
+    plot_elements(X1,Z1,connect1,gll_coordinates1)
+
     # Plotting All elements
     plot_elements(X,Z,connect,gll_coordinates)
 
