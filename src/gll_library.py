@@ -50,10 +50,19 @@ class LagrangePoly1D(object):
 
 
 def lagrange(i, x, xi):
-    """
-    Function that evaluates Lagrange polynomial of order N (len(xi)-1) 
-    and polynomial i [0, N-1] at location x at given collocation points
-    xi (not necessarily the GLL-points).
+    """lagrange(i, x, xi)
+    
+    INPUT:
+        i = polynomial number
+        x = location of evalutation
+        xi= collocation points
+
+    OUTPUT:
+        returns value of Lagrange polynomial of order N (len(xi)-1) 
+        and polynomial number i [0, N-1] at location x at given 
+        collocation points xi (not necessarily the GLL-points).
+
+    The algorithm follows the definition strictly.
     """
     fac = 1
     
@@ -68,7 +77,20 @@ def lagrange(i, x, xi):
 def lagrange2D(i,x,xi,j,y,eta):
     """lagrange2D(i,x,xi,j,y,eta)
     
-    calculates the 2D lagrange polynomial given collocation point sets
+    INPUT:
+        i = polynomial number 0-th dimension
+        x = location of evalutation 0-th dimension
+        xi= collocation points 0-th dimension
+
+        j   = polynomial number in 1st dimension
+        y   = location of evalutation in 1st dimension
+        eta = collocation points in 1st dimension
+
+    OUTPUT:
+        returns value of Lagrange polynomial of order N (len(xi)-1) 
+        and polynomial number i [0, N-1] at location x at given 
+        collocation points xi (not necessarily the GLL-points).
+        calculates the 2D lagrange polynomial given collocation point sets
     xi and eta the coordinate x,y, and the polynomial numbers i,j
     
     i, x, xi are the parameters for the polynomial in one direction and 
@@ -82,16 +104,117 @@ def lagrange2D(i,x,xi,j,y,eta):
 def lagrange1st(i,x,xi):
     """lagrange1st(i,x,xi)
 
-    This function computes the derivative of the lagrange polynomials
-    in 1D at point x, of lagrange polynomial i of with collocation points
-    xi.
-    Since the derivative of the lagrange polynomial is simply the 
-    lagrange polynomial multiplied with the legendre polynomial, that is 
-    what is done below.
+    INPUT:
+        i = polynomial number
+        x = location of evalutation
+        xi= collocation points
+
+    OUTPUT:
+        return the value of the derivative of the lagrange polynomial
+        in 1D at point x, of polynomial number i, with collocation 
+        points xi.
+        
+    The derivative of the Lagrange polynomial is the Lagrange polynomial 
+    multiplied with the Legendre Polynomial. Through simplification which
+    is described in detail in the documentation we can omit one 
+    numerator when k equals j.
+
     """
-    # multiplication of lagrange and legendre polynomial.
-    return lagrange(i,x,xi)*legendre(i,x,xi)
+    
+    sum = 0
+    
+    # Loop over Legendre summing term
+    for k in range(len(xi)):
+        # Check whether k is equal to i
+        if k != i:
+
+            # Reset fac for every term of the sum
+            fac = 1
+
+            # Loop over Lagrange multiplication term
+            for j in range(len(xi)):
+                if j != i:
+                    # When k equals j we have cancelling numerator
+                    if j == k:
+                        fac = fac *      1       / (xi[i] - xi[j])
+                    else:
+                        fac = fac * ((x - xi[j]) / (xi[i] - xi[j]))
             
+            # Note that we don't need a legendre polynomial term, since it 
+            # cancels out. See Documentation for details.
+            sum = sum + fac
+    
+    return sum 
+    
+    
+            
+def lagrange1st2D(i,x,xi,j,y,eta,d):
+    """lagrange1st2D(x,xi,y,eta,d)
+    
+    INPUT:
+        i   = polynomial number in 0-th dimension
+        x   = location of evalutation in 0-th dimension
+        xi  = collocation points in 0-th dimension
+
+        j   = polynomial number in 1st dimension
+        y   = location of evalutation in 1st dimension
+        eta = collocation points in 1st dimension
+        d   = dimension of differentiation (0 or 2)
+
+    OUTPUT:
+        return the value of the derivative of the lagrange polynomial
+        in 1D at point x, of polynomial number i, with collocation
+        points xi.
+
+    This function computes the 2D derivative of the lagrange polynomial 
+    in dimension d (0 or 1). The collocation points in the first and 
+    second dimension are xi and eta, respectively. The location is (x,y)
+    and the numbers of the polynomials in the different dimensions are 
+    i and j.
+
+    returns value
+    """
+
+    # derivative in xi dimension
+    if d==0:
+        return lagrange1st(i,x,xi)*lagrange(j,y,eta)
+    # derivative in eta dimension
+    elif d==1:
+        return lagrange(i,x,xi)*lagrange1st(j,y,eta)
+
+
+def lagrangeDerMat2D(x,xi,y,eta):
+    """lagrange1st2D(x,xi,y,eta)
+    
+    This function computes the 2D dervative matrix of the lagrange 
+    polynomial in the form:
+     _         _     _                                          _
+    |  dN/dxi   |   |  dN1/dxi  dN2/dxi  dN3/dxi  ...  dNn/dxi   |
+    |           | = |                                            |
+    |_ dN/deta _|   |_ dN1/deta dN2/deta dN3/deta ...  dNn/deta _|
+    
+    For the numbering of the shape functions see documentation
+
+    """
+    
+    # Initialize numpy array 
+    dN_dxi = np.zeros([2,len(xi)*len(eta)])
+
+    ### Compute derivatives of the k-th dimension
+    # Counter to set index in derivative matrix.
+    for k in range(2):
+        counter = 0
+        # Loop over y dimension
+        for j in range(len(eta)):
+            # Loop over x direction
+            for i in range(len(xi)):
+                dN_dxi[k,counter] = lagrange1st2D(i,x,xi,j,y,eta,k)
+                counter += 1
+    
+    return dN_dxi
+
+
+
 #######################################################################
 ###                Legendre Polynomials                             ###
 #######################################################################
