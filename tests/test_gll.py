@@ -90,8 +90,35 @@ class TestGLL(unittest.TestCase):
         self.assertEqual(src.lagrange2D(0,-1,xi,0,-1,eta),1)
         self.assertEqual(src.lagrange2D(0,-.5,xi,0,.5,eta),-0.046875)
 
+    
+    def testLegendre1D(self):
+        """Testing legendre() form the gll_library
+        First test tests the first order polynomial and the second one
+        the second order polynomial.
+        """
 
+        ###### 1 ######
+        # Setting the order
+        N = 1
 
+        # Getting collocation points
+        xi,__ = src.gll_pw(N)
+        print(xi)
+        # Testing the ouput og the legendre polynomial of degree 1
+        self.assertEqual(src.legendre(0,0.25,xi),-1-1/3)
+        self.assertEqual(src.legendre(1,0.5   ,xi),2/3)
+
+        ###### 2 ######
+        # Setting the order
+        N = 2
+
+        # Getting collocation points
+        xi,__ = src.gll_pw(N)
+        print(xi)
+        # Testing the ouput og the legendre polynomial of degree 2
+        self.assertEqual(src.legendre(0,-0.5,xi),-2-2/3)
+        self.assertEqual(src.legendre(1,-0.5   ,xi),2-2/3)
+        self.assertEqual(src.legendre(2,0.5   ,xi),2+2/3)
 
 if __name__ == "__main__":
     unittest.main()

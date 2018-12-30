@@ -82,6 +82,28 @@ def lagrange2D(i,x,xi,j,y,eta):
 
 
 #######################################################################
+###                Legendre Polynomials                             ###
+#######################################################################
+
+def legendre(i,x,xi):
+    """
+    Returns the value of Legendre Polynomial P_i(x) at location x given
+    collocation points xi (not necessarily GLL points) and polynomial
+    number i.
+    extremely simple algorithm.
+    """
+
+    sum = 0
+
+    for j in range(len(xi)):
+        if j != i:
+            sum = sum + 1/(x - xi[j])
+
+    return sum
+
+
+
+#######################################################################
 ###                 GLL - Points and Weights                       ####
 #######################################################################
 

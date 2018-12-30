@@ -2,24 +2,22 @@ from gll_library import lagrange
 from gll_library import lagrange2D
 import numpy as np
 
-def legendre(N, x):
+def legendre(i,x,xi):
     """
-    Returns the value of Legendre Polynomial P_N(x) at position x[-1, 1].
+    Returns the value of Legendre Polynomial P_i(x) at location x given
+    collocation points xi (not necessarily GLL points) and polynomial 
+    number i. 
+    extremely simple algorithm.
     """
-    P = np.zeros(2 * N)
 
-    if N == 0:
-        P[0] = 1
-    elif N == 1:
-        P[1] = x
-    else:
-        P[0] = 1
-        P[1] = x
-    for i in range(2, N + 1):
-        P[i] = (1.0 / float(i)) * ((2 * i - 1) * x * P[i - 1] - (i - 1) *
-                                   P[i - 2])
+    sum = 0
 
-    return(P[N])
+    for j in range(0,len(xi)):
+        if j != i:
+            sum = sum + 1/(x - xi[j])
+
+    return sum
+
 
 def lagrange1st(N):
     """
@@ -58,3 +56,6 @@ def lagrange1st(N):
 
             out[n + 1, i + 1] = sum
     return(out)
+
+
+if __name__
