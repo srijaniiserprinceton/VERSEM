@@ -13,6 +13,14 @@ test:
 	py.test tests
 
 # Make Documentation
+docs:
+	cd docs
+	make latexpdf
+	make html
 
+# Cleaning up
+clean:
+	cd docs
+	make clean
 
 .PHONY: init test
