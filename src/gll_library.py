@@ -79,8 +79,19 @@ def lagrange2D(i,x,xi,j,y,eta):
     return lagrange(i,x,xi)*lagrange(j,y,eta)   
 
 
+def lagrange1st(i,x,xi):
+    """lagrange1st(i,x,xi)
 
-
+    This function computes the derivative of the lagrange polynomials
+    in 1D at point x, of lagrange polynomial i of with collocation points
+    xi.
+    Since the derivative of the lagrange polynomial is simply the 
+    lagrange polynomial multiplied with the legendre polynomial, that is 
+    what is done below.
+    """
+    # multiplication of lagrange and legendre polynomial.
+    return lagrange(i,x,xi)*legendre(i,x,xi)
+            
 #######################################################################
 ###                Legendre Polynomials                             ###
 #######################################################################

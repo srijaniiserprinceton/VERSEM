@@ -89,8 +89,36 @@ class TestGLL(unittest.TestCase):
         # -0.046875 at (-.5,5).
         self.assertEqual(src.lagrange2D(0,-1,xi,0,-1,eta),1)
         self.assertEqual(src.lagrange2D(0,-.5,xi,0,.5,eta),-0.046875)
-
     
+    def testLagrange1st1D(self):
+        """Testing the 1D derivative of the lagrange polynomial
+        computed by lagrange1st() in src/gll_library.py. First test is
+        going to be of the first degree polynomial and second is going 
+        to be of second degree
+        """
+        ###### 1 ######
+        # Setting the order
+        N = 1
+
+        # Getting collocation points:
+        xi,__ = src.gll_pw(N)
+        
+        # Testing the output of the function
+        self.assertEqual(src.lagrange1st(0,0.5,xi),-0.5)
+        self.assertEqual(src.lagrange1st(1,0.25,xi),0.5)
+        
+        ###### 2 ######
+        # Setting the order
+        N = 2
+
+        # Getting collocation points:
+        xi,__ = src.gll_pw(N)
+        
+        # Testing the output of the function
+        self.assertEqual(src.lagrange1st(0,0.5,xi),0)
+        np.testing.assert_almost_equal(src.lagrange1st(1,0.25,xi),-0.5)
+        np.testing.assert_almost_equal(src.lagrange1st(2,0.5,xi),1)
+
     def testLegendre1D(self):
         """Testing legendre() form the gll_library
         First test tests the first order polynomial and the second one
@@ -103,7 +131,7 @@ class TestGLL(unittest.TestCase):
 
         # Getting collocation points
         xi,__ = src.gll_pw(N)
-        print(xi)
+        
         # Testing the ouput og the legendre polynomial of degree 1
         self.assertEqual(src.legendre(0,0.25,xi),-1-1/3)
         self.assertEqual(src.legendre(1,0.5   ,xi),2/3)
