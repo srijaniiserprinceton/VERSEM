@@ -155,6 +155,11 @@ class TestGLL(unittest.TestCase):
         self.assertEqual(src.lagrange1st2D(0,1,xi,0,0,eta,0),0)
         self.assertEqual(src.lagrange1st2D(0,1,xi,0,-1,eta,0),0.5)
         self.assertEqual(src.lagrange1st2D(0,-1,xi,0,1,eta,1),0.5)
+        self.assertEqual(src.lagrange1st2D(1,0,xi,1,0,eta,1),0)
+        self.assertEqual(src.lagrange1st2D(2,0,xi,1,0,eta,0),0.5)
+        self.assertEqual(src.lagrange1st2D(2,0,xi,1,0,eta,1), 0)
+        self.assertEqual(src.lagrange1st2D(2,0,xi,2,0,eta,0),0)
+        self.assertEqual(src.lagrange1st2D(2,0,xi,2,0,eta,1),0)
     
     def testLagrangeDerMat2D(self):
         """Testing LagrangeDerMat2D() from gll_library
@@ -178,7 +183,24 @@ class TestGLL(unittest.TestCase):
 
         # Check whether correct:
         np.testing.assert_array_equal(dN_Sol,dNdxi)
+        
+        
+        ###### 2 ######
+        # Setting the order
+        N = 2
 
+        # Getting collocation points
+        xi,__ = src.gll_pw(N)
+        eta,__ = src.gll_pw(N)
+        
+        # Solution:     N:   1  2    3   4    5  6    7  8    9
+        dN_Sol = np.array([[ 0, 0,   0, -0.5, 0, 0.5, 0, 0,   0],
+                           [ 0,-0.5, 0, -0,   0, 0  , 0, 0.5, 0]])
+        # Print the derivative matrix
+        dNdxi = src.lagrangeDerMat2D(0,xi,0,eta)
+
+        # Check whether correct:
+        np.testing.assert_array_equal(dN_Sol,dNdxi)
 
     def testLegendre1D(self):
         """Testing legendre() from the gll_library
