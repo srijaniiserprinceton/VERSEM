@@ -214,6 +214,34 @@ def lagrangeDerMat2D(x,xi,y,eta):
     return dN_dxi
 
 
+#######################################################################
+###                The Jacobian Matrix                              ###
+#######################################################################
+
+
+def Jacobian(dN,x):
+    """Jacobian(dN,x,y)
+
+    Takes in the shape function derivative vector of the 
+
+    """
+    pass
+
+def Jacobian2D(dN,x):
+    """Jacobian2D(dN,x,y)
+
+    INPUT:
+        dN = shapefunction derivative matrix at location (xi,eta)
+        x  = nx2 vector with nodes' x and y coordinates in first and
+             second column, respectively
+    
+    OUTPUT: 
+        Jacobian matrix (numpy) depending on dN and vector 
+    """
+
+    return np.matmul(dN,x)
+
+
 
 #######################################################################
 ###                Legendre Polynomials                             ###
