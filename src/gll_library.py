@@ -1,3 +1,9 @@
+"""This is a function library for GLL interpolation and quadrature
+
+Author: Lucas Sawade
+
+"""
+
 import numpy as np
 
 
