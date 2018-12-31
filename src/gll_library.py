@@ -11,65 +11,22 @@ import numpy as np
 ###                 Lagrange Polynomial                            ####
 #######################################################################
 
-
-
-class LagrangePoly1D(object):                                               
-    """Callable lagrange interpolator object.                                      
-                                                                        
-    Example usage: to construct the lagrange polynomial 
-    l_0^1(x) =  and evaluate p(3):                                               
-                                                                        
-    p = Polynomial(1,[-1 1])                                           
-                                                                        
-    p(3)                                                                
-                                                                        
-    """
-    pass
-
-    def __init__(self, degree, xi):                                         
-        """ """
-         
-        self._degree = degree
-        self._xi = xi
-                                                                        
-    def _f(self,i):                                                     
-        """Calculation of the i-th lagrange polynomial of 
-        degree <self._degree>.
-        """
-        fac = 1
-        for j in range(-1, self._degree):
-            if j != i:
-                fac = fac * ((x - xi[j + 1]) / (xi[i + 1] - xi[j + 1]))
-        return fac
-        
-
-    def _df(self,x):
-        """derivative of the lagrange polynomial"""
-        pass
-                                                   
-
-    # Instances of classes that have a defined __call__ method are      
-    # themselves callable, as if they were functions                    
-    def __call__(self, x):                                              
-        return self._f(x)          
-
-
-
 def lagrange(i, x, xi):
-    """lagrange(i, x, xi)
-    
-    INPUT:
-        i = polynomial number
-        x = location of evalutation
-        xi= collocation points
+    """.. function:: lagrange(i, x, xi)
 
-    OUTPUT:
-        returns value of Lagrange polynomial of order N (len(xi)-1) 
-        and polynomial number i [0, N-1] at location x at given 
-        collocation points xi (not necessarily the GLL-points).
+    The algorithm follows the definition of the Lagrange Polynomial
+    strictly.
 
-    The algorithm follows the definition strictly.
+    :param i: Polynomial number.
+    :param x: location of evaluation.
+    :param xi: numpy 1D array of collocation points.
+
+    :rtype: value of Lagrange polynomial of order N (len(xi)-1)  and 
+            polynomial number i [0, N-1] at location x at given 
+            collocation points xi (not necessarily the GLL-points).
+
     """
+
     fac = 1
     
     for j in range(0, len(xi)):
@@ -81,44 +38,43 @@ def lagrange(i, x, xi):
 
 
 def lagrange2D(i,x,xi,j,y,eta):
-    """lagrange2D(i,x,xi,j,y,eta)
+    """.. function:: lagrange2D(i,x,xi,j,y,eta)
+     
+    Computes the lagrange polynomial in two dimensions 
+
+    :param i: polynomial number 0-th dimension
+    :param x: location of evalutation 0-th dimension
+    :param xi: collocation points 0-th dimension
+
+    :param j: polynomial number in 1st dimension
+    :param y: location of evalutation in 1st dimension
+    :param eta: collocation points in 1st dimension
+
+    :rtype: returns value of Lagrange polynomial of order N (len(xi)-1) 
+            and polynomial number i [0, N-1] at location x at given 
+            collocation points xi (not necessarily the GLL-points).
+            calculates the 2D lagrange polynomial given collocation 
+            point sets xi and eta the coordinate x,y, and the polynomial 
+            numbers i,j
     
-    INPUT:
-        i = polynomial number 0-th dimension
-        x = location of evalutation 0-th dimension
-        xi= collocation points 0-th dimension
-
-        j   = polynomial number in 1st dimension
-        y   = location of evalutation in 1st dimension
-        eta = collocation points in 1st dimension
-
-    OUTPUT:
-        returns value of Lagrange polynomial of order N (len(xi)-1) 
-        and polynomial number i [0, N-1] at location x at given 
-        collocation points xi (not necessarily the GLL-points).
-        calculates the 2D lagrange polynomial given collocation point sets
-    xi and eta the coordinate x,y, and the polynomial numbers i,j
-    
-    i, x, xi are the parameters for the polynomial in one direction and 
-    j, y, eta the parameters for the other direction in orthogonal space
-
     """
 
     return lagrange(i,x,xi)*lagrange(j,y,eta)   
 
 
 def lagrange1st(i,x,xi):
-    """lagrange1st(i,x,xi)
+    """.. function:: lagrange1st(i,x,xi)
+    
+    Computes the 1st derivative of the lagrange polynomial in 1D.
 
-    INPUT:
-        i = polynomial number
-        x = location of evalutation
-        xi= collocation points
+    :param i: polynomial number
+    :param x: location of evalutation
+    :param xi: collocation points
 
-    OUTPUT:
-        return the value of the derivative of the lagrange polynomial
-        in 1D at point x, of polynomial number i, with collocation 
-        points xi.
+    
+    :rtype: return the value of the derivative of the lagrange 
+            polynomial in 1D at point x, of polynomial number i, with 
+            collocation points xi.
         
     The derivative of the Lagrange polynomial is the Lagrange polynomial 
     multiplied with the Legendre Polynomial. Through simplification which
@@ -155,22 +111,23 @@ def lagrange1st(i,x,xi):
     
             
 def lagrange1st2D(i,x,xi,j,y,eta,d):
-    """lagrange1st2D(x,xi,y,eta,d)
+    """.. function:: lagrange1st2D(x,xi,y,eta,d)
     
-    INPUT:
-        i   = polynomial number in 0-th dimension
-        x   = location of evalutation in 0-th dimension
-        xi  = collocation points in 0-th dimension
+    Computes the 1st derivative of the 2D Lagrange polynomial.
 
-        j   = polynomial number in 1st dimension
-        y   = location of evalutation in 1st dimension
-        eta = collocation points in 1st dimension
-        d   = dimension of differentiation (0 or 2)
+    :param i: polynomial number in 0-th dimension
+    :param x: location of evalutation in 0-th dimension
+    :param xi: collocation points in 0-th dimension
 
-    OUTPUT:
-        return the value of the derivative of the lagrange polynomial
-        in 1D at point x, of polynomial number i, with collocation
-        points xi.
+    :param j: polynomial number in 1st dimension
+    :param y: location of evalutation in 1st dimension
+    :param eta: collocation points in 1st dimension
+    
+    :param d: dimension of differentiation (0 or 2)
+
+    :rtype: return the value of the derivative of the lagrange 
+            polynomial in 1D at point x, of polynomial number i, with 
+            collocation points xi.
 
     This function computes the 2D derivative of the lagrange polynomial 
     in dimension d (0 or 1). The collocation points in the first and 
@@ -178,7 +135,6 @@ def lagrange1st2D(i,x,xi,j,y,eta,d):
     and the numbers of the polynomials in the different dimensions are 
     i and j.
 
-    returns value
     """
 
     # derivative in xi dimension
@@ -190,16 +146,28 @@ def lagrange1st2D(i,x,xi,j,y,eta,d):
 
 
 def lagrangeDerMat2D(x,xi,y,eta):
-    """lagrange1st2D(x,xi,y,eta)
+    """.. function:: lagrangeDerMat2D(x,xi,y,eta)
     
     This function computes the 2D dervative matrix of the lagrange 
-    polynomial in the form:
-     _         _     _                                          _
-    |  dN/dxi   |   |  dN1/dxi  dN2/dxi  dN3/dxi  ...  dNn/dxi   |
-    |           | = |                                            |
-    |_ dN/deta _|   |_ dN1/deta dN2/deta dN3/deta ...  dNn/deta _|
+    polynomial in the form
+        
+    ::
     
-    For the numbering of the shape functions see documentation
+         _         _     _                                          _
+        |  dN/dxi   |   |  dN1/dxi  dN2/dxi  dN3/dxi  ...  dNn/dxi   |
+        |           | = |                                            |
+        |_ dN/deta _|   |_ dN1/deta dN2/deta dN3/deta ...  dNn/deta _|
+    
+
+    :param x: location in 0th dimension
+    :param xi: ``numpy`` 1D array of collocation points in 0th dimension
+
+    :param y: location in 1st dimension
+    :param eta: ``numpy`` 1D array collocation points in 1st dimension
+    
+    :rtype: ``numpy`` 2x[len(xi)*len(eta)] array 
+    
+    For the numbering of the shape functions see documentation.
 
     """
     
@@ -226,23 +194,39 @@ def lagrangeDerMat2D(x,xi,y,eta):
 
 
 def Jacobian(dN,x):
-    """Jacobian(dN,x,y)
+    """.. function:: Jacobian(dN,x)
 
-    Takes in the shape function derivative vector of the 
+    Computes the Jacobian Matrix [dx/dxi] between the global and the 
+    local element coordinates
+
+    :param dN: shape function derivative matrix (``numpy``)
+               [dim]x[Number of GLL points]
+    :param x: global node coordinates [dim]x[Number of GLL points]
+              (``numpy``)
+    
+    :rtype: ``numpy`` [dim]x[dim] array
+
+    The description of the Jacobian can be found on the theory
+    documentation.
 
     """
     pass
 
 def Jacobian2D(dN,x):
-    """Jacobian2D(dN,x,y)
+    """.. function:: Jacobian2D(dN,x)
 
-    INPUT:
-        dN = shapefunction derivative matrix at location (xi,eta)
-        x  = nx2 vector with nodes' x and y coordinates in first and
-             second column, respectively
+    Computes the Jacobian Matrix [dx/dxi] between the global and the 
+    local element coordinates
+
+    :param dN: shape function derivative matrix (``numpy``)
+               [dim]x[Number of GLL points]
+    :param x: global node coordinates [dim]x[Number of GLL points]
+              (``numpy``)
     
-    OUTPUT: 
-        Jacobian matrix (numpy) depending on dN and vector 
+    :rtype: ``numpy`` [dim]x[dim] array
+
+    The description of the Jacobian can be found on the theory
+    documentation.
     """
 
     return np.matmul(dN,x)
@@ -254,11 +238,20 @@ def Jacobian2D(dN,x):
 #######################################################################
 
 def legendre(i,x,xi):
-    """
-    Returns the value of Legendre Polynomial P_i(x) at location x given
-    collocation points xi (not necessarily GLL points) and polynomial
-    number i.
-    extremely simple algorithm.
+    """.. function:: legendre(i,x,xi)
+
+    Computes the legendre polynomial.
+    
+    :param i: number of polynomial
+    :param x: location of evalutation
+    :param xi: ``numpy`` 1D array of collocation points.
+
+    :rtype: returns the value of Legendre Polynomial P_i(x) at location 
+            x given collocation points xi (not necessarily GLL points) 
+            and polynomial number i. 
+    
+    Extremely simple algorithm.
+    
     """
 
     sum = 0
@@ -276,11 +269,20 @@ def legendre(i,x,xi):
 #######################################################################
 
 def gll_pw(N):
-    """
+    """.. function :: gll_pw(N)
+    
+    :param N: Polynomial degree
+    
+    :rtype: 1x2 tuple of 1D ``numpy`` 1x(N+1) arrays, the first 
+            containing the collocation points and the second containing
+            quadrature weights
+
     Takes in polynomial degree and returns the (N+1) points and weights
     Returns GLL (Gauss Lobato Legendre module with collocation points and
     weights)
+    
     """
+
     # Initialization of integration weights and collocation points
     # [xi, weights] =  gll(N)
     # Values taken from Diploma Thesis Bernhard Schuberth
