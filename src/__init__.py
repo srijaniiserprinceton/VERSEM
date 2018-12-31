@@ -1,11 +1,4 @@
 """Package __init__.py docstring"""
 # Import packages:
-from .gll_library import gll_pw
-from .gll_library import lagrange
-from .gll_library import lagrange2D
-from .gll_library import lagrange1st
-from .gll_library import lagrange1st2D
-from .gll_library import lagrangeDerMat2D
-from .gll_library import Jacobian2D
-from .gll_library import legendre
+from src import gll_library
 from .loc2glob import local2global

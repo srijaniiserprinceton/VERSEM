@@ -20,7 +20,7 @@ class TestGLL(unittest.TestCase):
         N = 2
 
         # Getting Points and Weights
-        xi, weights = src.gll_pw(N)
+        xi, weights = src.gll_library.gll_pw(N)
 
         # Testing the Values
         np.testing.assert_array_almost_equal(xi,np.array([-1,0,1]))
@@ -37,20 +37,20 @@ class TestGLL(unittest.TestCase):
         N = 1
         
         # Getting GLL Points and weights
-        xi, weights = src.gll_pw(N)
+        xi, weights = src.gll_library.gll_pw(N)
         
         # Testing the output of lagrange
-        self.assertEqual(src.lagrange(0,-0.5,xi),0.75) 
+        self.assertEqual(src.gll_library.lagrange(0,-0.5,xi),0.75) 
 
         ####### 2 ########
         # Setting Order
         N = 2
 
         # Getting GLL Points and weights
-        xi, weights = src.gll_pw(N)
+        xi, weights = src.gll_library.gll_pw(N)
         
         # Testing the output of lagrange
-        self.assertEqual(src.lagrange(0,-0.5,xi),0.375)
+        self.assertEqual(src.gll_library.lagrange(0,-0.5,xi),0.375)
         
 
     
@@ -63,15 +63,15 @@ class TestGLL(unittest.TestCase):
         N = 1
 
         # Getting GLL Points and weights
-        xi,  weights = src.gll_pw(N)
-        eta, weights = src.gll_pw(N)
+        xi,  weights = src.gll_library.gll_pw(N)
+        eta, weights = src.gll_library.gll_pw(N)
         
         # Testing the output of lagrange
         # coordinate is (x,y)=(-.5,.5) and degree of both is 1 and the
         # polynomial number is 0 of both: Should be 1 at (-1,-1) and 
         # -0.046875 at (-.5,5).
-        self.assertEqual(src.lagrange2D(0,-1,xi,0,-1,eta),1)
-        self.assertEqual(src.lagrange2D(1,-.5,xi,0,.5,eta),0.0625)
+        self.assertEqual(src.gll_library.lagrange2D(0,-1,xi,0,-1,eta),1)
+        self.assertEqual(src.gll_library.lagrange2D(1,-.5,xi,0,.5,eta),0.0625)
 
 
 
@@ -80,15 +80,15 @@ class TestGLL(unittest.TestCase):
         N = 2
 
         # Getting GLL Points and weights
-        xi,  weights = src.gll_pw(N)
-        eta, weights = src.gll_pw(N)
+        xi,  weights = src.gll_library.gll_pw(N)
+        eta, weights = src.gll_library.gll_pw(N)
         
         # Testing the output of lagrange
         # coordinate is (x,y)=(-.5,.5) and degree of both is 1 and the
         # polynomial number is 0 of both: Should be 1 at (-1,-1) and 
         # -0.046875 at (-.5,5).
-        self.assertEqual(src.lagrange2D(0,-1,xi,0,-1,eta),1)
-        self.assertEqual(src.lagrange2D(0,-.5,xi,0,.5,eta),-0.046875)
+        self.assertEqual(src.gll_library.lagrange2D(0,-1,xi,0,-1,eta),1)
+        self.assertEqual(src.gll_library.lagrange2D(0,-.5,xi,0,.5,eta),-0.046875)
     
     def testLagrange1st1D(self):
         """Testing the 1D derivative of the lagrange polynomial
@@ -101,24 +101,24 @@ class TestGLL(unittest.TestCase):
         N = 1
 
         # Getting collocation points:
-        xi,__ = src.gll_pw(N)
+        xi,__ = src.gll_library.gll_pw(N)
         
         # Testing the output of the function
-        self.assertEqual(src.lagrange1st(0,0.5,xi),-0.5)
-        self.assertEqual(src.lagrange1st(0,1,xi),-0.5)
-        self.assertEqual(src.lagrange1st(1,0.25,xi),0.5)
+        self.assertEqual(src.gll_library.lagrange1st(0,0.5,xi),-0.5)
+        self.assertEqual(src.gll_library.lagrange1st(0,1,xi),-0.5)
+        self.assertEqual(src.gll_library.lagrange1st(1,0.25,xi),0.5)
         
         ###### 2 ######
         # Setting the order
         N = 2
 
         # Getting collocation points:
-        xi,__ = src.gll_pw(N)
+        xi,__ = src.gll_library.gll_pw(N)
         
         # Testing the output of the function
-        self.assertEqual(src.lagrange1st(0,0.5,xi),0)
-        np.testing.assert_almost_equal(src.lagrange1st(1,0.25,xi),-0.5)
-        np.testing.assert_almost_equal(src.lagrange1st(2,0.5,xi),1)
+        self.assertEqual(src.gll_library.lagrange1st(0,0.5,xi),0)
+        np.testing.assert_almost_equal(src.gll_library.lagrange1st(1,0.25,xi),-0.5)
+        np.testing.assert_almost_equal(src.gll_library.lagrange1st(2,0.5,xi),1)
     
     def testLagrange1st2D(self):
         """Testing the 1D derivative of the lagrange polynomial in 2D.
@@ -132,34 +132,34 @@ class TestGLL(unittest.TestCase):
         N = 1
 
         # Getting collocation points
-        xi, __  = src.gll_pw(N)
-        eta, __ = src.gll_pw(N)
+        xi, __  = src.gll_library.gll_pw(N)
+        eta, __ = src.gll_library.gll_pw(N)
         
         # Testing the values
-        self.assertEqual(src.lagrange1st2D(0,0,xi,0,0,eta,0),-0.25)
-        self.assertEqual(src.lagrange1st2D(0,1,xi,0,0,eta,0),-0.25)
-        self.assertEqual(src.lagrange1st2D(0,0.5,xi,0,0,eta,1),-0.125)
-        self.assertEqual(src.lagrange1st2D(0,1,xi,0,1,eta,1),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,0,xi,0,0,eta,0),-0.25)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,1,xi,0,0,eta,0),-0.25)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,0.5,xi,0,0,eta,1),-0.125)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,1,xi,0,1,eta,1),0)
 
         ###### 2 ######
         # Setting the order
         N = 2
 
         # Getting collocation points
-        xi, __  = src.gll_pw(N)
-        eta, __ = src.gll_pw(N)
+        xi, __  = src.gll_library.gll_pw(N)
+        eta, __ = src.gll_library.gll_pw(N)
         
         # Testing the values
-        self.assertEqual(src.lagrange1st2D(0,0.5,xi,0,0,eta,0),0)
-        self.assertEqual(src.lagrange1st2D(0,1,xi,0,1,eta,0),0)
-        self.assertEqual(src.lagrange1st2D(0,1,xi,0,0,eta,0),0)
-        self.assertEqual(src.lagrange1st2D(0,1,xi,0,-1,eta,0),0.5)
-        self.assertEqual(src.lagrange1st2D(0,-1,xi,0,1,eta,1),0.5)
-        self.assertEqual(src.lagrange1st2D(1,0,xi,1,0,eta,1),0)
-        self.assertEqual(src.lagrange1st2D(2,0,xi,1,0,eta,0),0.5)
-        self.assertEqual(src.lagrange1st2D(2,0,xi,1,0,eta,1), 0)
-        self.assertEqual(src.lagrange1st2D(2,0,xi,2,0,eta,0),0)
-        self.assertEqual(src.lagrange1st2D(2,0,xi,2,0,eta,1),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,0.5,xi,0,0,eta,0),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,1,xi,0,1,eta,0),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,1,xi,0,0,eta,0),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,1,xi,0,-1,eta,0),0.5)
+        self.assertEqual(src.gll_library.lagrange1st2D(0,-1,xi,0,1,eta,1),0.5)
+        self.assertEqual(src.gll_library.lagrange1st2D(1,0,xi,1,0,eta,1),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(2,0,xi,1,0,eta,0),0.5)
+        self.assertEqual(src.gll_library.lagrange1st2D(2,0,xi,1,0,eta,1), 0)
+        self.assertEqual(src.gll_library.lagrange1st2D(2,0,xi,2,0,eta,0),0)
+        self.assertEqual(src.gll_library.lagrange1st2D(2,0,xi,2,0,eta,1),0)
     
     def testLagrangeDerMat2D(self):
         """Testing LagrangeDerMat2D() from gll_library
@@ -172,14 +172,14 @@ class TestGLL(unittest.TestCase):
         N = 1
 
         # Getting collocation points
-        xi,__ = src.gll_pw(N)
-        eta,__ = src.gll_pw(N)
+        xi,__ = src.gll_library.gll_pw(N)
+        eta,__ = src.gll_library.gll_pw(N)
         
         # Solution:
         dN_Sol = np.array([[-0.25,0.25,-0.25,0.25],
                             [-0.25,-0.25,0.25,0.25]])
         # Print the derivative matrix
-        dNdxi = src.lagrangeDerMat2D(0,xi,0,eta)
+        dNdxi = src.gll_library.lagrangeDerMat2D(0,xi,0,eta)
 
         # Check whether correct:
         np.testing.assert_array_equal(dN_Sol,dNdxi)
@@ -190,14 +190,14 @@ class TestGLL(unittest.TestCase):
         N = 2
 
         # Getting collocation points
-        xi,__ = src.gll_pw(N)
-        eta,__ = src.gll_pw(N)
+        xi,__ = src.gll_library.gll_pw(N)
+        eta,__ = src.gll_library.gll_pw(N)
         
         # Solution:     N:   1  2    3   4    5  6    7  8    9
         dN_Sol = np.array([[ 0, 0,   0, -0.5, 0, 0.5, 0, 0,   0],
                            [ 0,-0.5, 0, -0,   0, 0  , 0, 0.5, 0]])
         # Print the derivative matrix
-        dNdxi = src.lagrangeDerMat2D(0,xi,0,eta)
+        dNdxi = src.gll_library.lagrangeDerMat2D(0,xi,0,eta)
 
         # Check whether correct:
         np.testing.assert_array_equal(dN_Sol,dNdxi)
@@ -221,43 +221,43 @@ class TestGLL(unittest.TestCase):
         N = 1
 
         # Getting collocation points
-        xi,__  = src.gll_pw(N)
-        eta,__ = src.gll_pw(N)
+        xi,__  = src.gll_library.gll_pw(N)
+        eta,__ = src.gll_library.gll_pw(N)
         
         # Creating arbitrary coordinate matrix as shown in description
         x = np.array([[0,0],[3,1],[1,2],[3,3]])
 
         # Computing shape function derivative matrices
         xi1,eta1  = (-1,-1) # first node in reference element 
-        dN1 = src.lagrangeDerMat2D(xi1,xi,eta1,eta)
+        dN1 = src.gll_library.lagrangeDerMat2D(xi1,xi,eta1,eta)
         
         # Computing shape function derivative matrices
         xi2,eta2  = (1,-1) # first node in reference element 
-        dN2 = src.lagrangeDerMat2D(xi2,xi,eta2,eta)
+        dN2 = src.gll_library.lagrangeDerMat2D(xi2,xi,eta2,eta)
 
         # Computing shape function derivative matrices
         xi3,eta3  = (-1,1) # first node in reference element 
-        dN3 = src.lagrangeDerMat2D(xi3,xi,eta3,eta)
+        dN3 = src.gll_library.lagrangeDerMat2D(xi3,xi,eta3,eta)
         
         # Computing shape function derivative matrices
         xi4,eta4  = (1,1) # first node in reference element 
-        dN4 = src.lagrangeDerMat2D(xi4,xi,eta4,eta)
+        dN4 = src.gll_library.lagrangeDerMat2D(xi4,xi,eta4,eta)
 
         # Calculating Jacobian
-        J1 = src.Jacobian2D(dN1,x)
+        J1 = src.gll_library.Jacobian2D(dN1,x)
         J1_Sol = np.array([[1.5, 0.5],
                            [0.5, 1 ]])
 
 
-        J2 = src.Jacobian2D(dN2,x)
+        J2 = src.gll_library.Jacobian2D(dN2,x)
         J2_Sol = np.array([[1.5, 0.5],
                            [0,   1  ]])
 
-        J3 = src.Jacobian2D(dN3,x)
+        J3 = src.gll_library.Jacobian2D(dN3,x)
         J3_Sol = np.array([[1,   0.5],
                            [0.5, 1  ]] ) 
 
-        J4 = src.Jacobian2D(dN4,x)
+        J4 = src.gll_library.Jacobian2D(dN4,x)
         J4_Sol = np.array([[1, 0.5],
                            [0, 1  ]])
 
@@ -278,23 +278,23 @@ class TestGLL(unittest.TestCase):
         N = 1
 
         # Getting collocation points
-        xi,__ = src.gll_pw(N)
+        xi,__ = src.gll_library.gll_pw(N)
         
         # Testing the ouput og the legendre polynomial of degree 1
-        self.assertEqual(src.legendre(0,0.25,xi),-1-1/3)
-        self.assertEqual(src.legendre(1,0.5   ,xi),2/3)
+        self.assertEqual(src.gll_library.legendre(0,0.25,xi),-1-1/3)
+        self.assertEqual(src.gll_library.legendre(1,0.5   ,xi),2/3)
 
         ###### 2 ######
         # Setting the order
         N = 2
 
         # Getting collocation points
-        xi,__ = src.gll_pw(N)
+        xi,__ = src.gll_library.gll_pw(N)
         print(xi)
         # Testing the ouput og the legendre polynomial of degree 2
-        self.assertEqual(src.legendre(0,-0.5,xi),-2-2/3)
-        self.assertEqual(src.legendre(1,-0.5   ,xi),2-2/3)
-        self.assertEqual(src.legendre(2,0.5   ,xi),2+2/3)
+        self.assertEqual(src.gll_library.legendre(0,-0.5,xi),-2-2/3)
+        self.assertEqual(src.gll_library.legendre(1,-0.5   ,xi),2-2/3)
+        self.assertEqual(src.gll_library.legendre(2,0.5   ,xi),2+2/3)
 
 if __name__ == "__main__":
     unittest.main()
