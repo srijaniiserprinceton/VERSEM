@@ -9,16 +9,28 @@ Welcome to VERSEM's documentation!
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
-
+   
+.. autosummary::
+   :toctree: _autosummary
 
 Source Code
 ===================
-.. automodule:: src
 
 GLL Library
 +++++++++++++++++++
 .. automodule:: src.gll_library
     :members:
+
+Unit Testing
+=================
+
+GLL Library
+++++++++++++++++++
+.. automodule:: tests/test_gll.py
+    :members:
+.. autoclass:: tests/test_gll.py
+    :members:
+
 
 
 Indices and tables

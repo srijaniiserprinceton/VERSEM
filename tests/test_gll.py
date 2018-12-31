@@ -202,6 +202,71 @@ class TestGLL(unittest.TestCase):
         # Check whether correct:
         np.testing.assert_array_equal(dN_Sol,dNdxi)
 
+    def testJacobian2D(self):
+        """Testing the Jacobian matrix multiplication Jacobian2D() from 
+        src/gll_library.py. An arbitrary element setup is tested:
+                      
+            y                    ( x , y )
+            ^                     _     _
+         3  |    __--4           | 0 , 0 |
+         2  |  3-    |           | 3 , 1 |
+         1  |/___----2           | 1 , 2 |
+         0  1-----------> x      |_3 , 3_|  
+            0  1  2  3
+        
+        """
+ 
+        ###### 1 ######
+        # Setting the order
+        N = 1
+
+        # Getting collocation points
+        xi,__  = src.gll_pw(N)
+        eta,__ = src.gll_pw(N)
+        
+        # Creating arbitrary coordinate matrix as shown in description
+        x = np.array([[0,0],[3,1],[1,2],[3,3]])
+
+        # Computing shape function derivative matrices
+        xi1,eta1  = (-1,-1) # first node in reference element 
+        dN1 = src.lagrangeDerMat2D(xi1,xi,eta1,eta)
+        
+        # Computing shape function derivative matrices
+        xi2,eta2  = (1,-1) # first node in reference element 
+        dN2 = src.lagrangeDerMat2D(xi2,xi,eta2,eta)
+
+        # Computing shape function derivative matrices
+        xi3,eta3  = (-1,1) # first node in reference element 
+        dN3 = src.lagrangeDerMat2D(xi3,xi,eta3,eta)
+        
+        # Computing shape function derivative matrices
+        xi4,eta4  = (1,1) # first node in reference element 
+        dN4 = src.lagrangeDerMat2D(xi4,xi,eta4,eta)
+
+        # Calculating Jacobian
+        J1 = src.Jacobian2D(dN1,x)
+        J1_Sol = np.array([[1.5, 0.5],
+                           [0.5, 1 ]])
+
+
+        J2 = src.Jacobian2D(dN2,x)
+        J2_Sol = np.array([[1.5, 0.5],
+                           [0,   1  ]])
+
+        J3 = src.Jacobian2D(dN3,x)
+        J3_Sol = np.array([[1,   0.5],
+                           [0.5, 1  ]] ) 
+
+        J4 = src.Jacobian2D(dN4,x)
+        J4_Sol = np.array([[1, 0.5],
+                           [0, 1  ]])
+
+        # Testing
+        np.testing.assert_array_equal(J1,J1_Sol)
+        np.testing.assert_array_equal(J2,J2_Sol)
+        np.testing.assert_array_equal(J3,J3_Sol)
+        np.testing.assert_array_equal(J4,J4_Sol)
+
     def testLegendre1D(self):
         """Testing legendre() from the gll_library
         First test tests the first order polynomial and the second one
