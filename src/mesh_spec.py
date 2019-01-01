@@ -7,7 +7,7 @@ import netCDF4
 
 # Import GLL library to get the lagrange polynomials for interpolation
 # of the grid
-import src.gll_library as gll
+import gll_library as gll
 
 
 
