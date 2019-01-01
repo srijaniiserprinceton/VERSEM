@@ -5,15 +5,103 @@ mesh to a Spectral-Element mesh. File for mesh object creation?"""
 import numpy as np
 import netCDF4
 
-# Plotting
-from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
-import matplotlib.pyplot as plt
-import matplotlib
-
 # Import GLL library to get the lagrange polynomials for interpolation
 # of the grid
-import gll_library as gll
+import src.gll_library as gll
+
+
+
+def readUniformVelocity(input_mesh,outfilename):
+    """.. function testAssignPorperties()
+    
+    Saves ``.npy`` array file with  
+    ::
+    
+        Columns:    X Y Z rho vp vs
+    
+    """
+    
+    # Get XYZ coordinates of the mesh
+    X,Y,Z,connect = readEx(input_mesh)
+
+    # Uniform material for test
+    rho = 2700  # kg/m^3
+    vp  = 6500  # m/s 
+    vs  = 3750  # m/s
+
+    # Initialize empty array
+    prop = np.zeros([len(X),6])
+
+    # Populate property matrix
+    prop[:,0] = X
+    prop[:,1] = Y
+    prop[:,2] = Z
+    prop[:,3] = rho
+    prop[:,4] = vp
+    prop[:,5] = vs
+    
+    # Save materials to .npy file
+    np.save(outfilename,prop)
+
+
+def assProp():
+    """testning the property assignment"""
+    
+    ngllx = 5
+    ngllz = 5
+    X,Y,Z,connect = readEx('input/RectMesh.e')
+    gll_coordinates, gll_connect = \
+                            mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
+    
+    v_mod = 'input/vel_mod.npy'
+
+    # assign properties
+    prop = assignSeismicProperties(v_mod,gll_coordinates)
+
+
+def assignSeismicProperties(velocity_model,gll_coordinates):
+    """.. function:: assignSeismicProperties(name)
+    
+    Reads an ``.npy`` file that contains a ``numpy`` array with velocity 
+    model of the format
+    
+    ::
+    
+        Columns:    X Y Z rho vp vs
+
+    Then, it assigns the properties to the interpolated mesh using the 
+    nearest neighbour principle.
+
+    :param v_name: velocity model array specified as above.
+    :param gll_coordinates: coordinate matrix of the interpolated GLL
+                            points using the original matrix.
+        
+    :rtype: Nx3 ``numpy`` array with the seismic properties for each 
+            node in gll_coordinates
+
+    """
+    
+    # Load .npy file
+    v = np.load(velocity_model)
+
+    # Number of nodes
+    N = len(gll_coordinates[:,0])
+
+    # Initialize propertz matrix
+    prop = np.zeros([N,3])
+
+    # Check which coordinate is the closest to interpolated node in for 
+    # loop
+
+    for i in range(N):
+        # Here for now only 2D
+        dist = np.sqrt( (v[:,0]-gll_coordinates[i,0])**2  
+                        + (v[:,2]-gll_coordinates[i,1])**2)
+        index = np.argmin(dist)
+        prop[i,:] = v[index,3::]
+
+    return prop
+
 
 
 def readEx(name):
@@ -172,158 +260,6 @@ def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
 
     return (gll_coordinates,gll_connect)
 
-def plot_elements(X,Y,connect,gll_coordinates,gll_connect,\
-                    num_o_el="all",plot_el_num="no",plot_node_num="no",\
-                    plot_axis="yes"):
-    """plot_elements(X,Y,connect,gll_coordinates,gll_connect,
-                    num_o_el="all",plot_el_num="no",plot_node_num="no"):
-    
-    This function plots the GLL points as well as control points in 2D
-
-    INPUT:
-        X,Y      = 1xN vectors with node coordinates
-        connect  = connectivity matrix depending on the number of GLL 
-                   points, ([total number of elements] X [GLL^2])
-        num_o_el = number of elements to be plotted, default is string 
-                   valued 'all', set to number small
-        plot_el_num = default is "no", change to "yes" if element numbers 
-                      should be plotted
-        plot_node_num = default is "no", change to "yes" if node numbers 
-                      should be plotted
-        plot_axis = default is "yes", if you want to omit axes 
-                    set to "no" 
-    OUTPUT:
-        A figure plotting the 'num_o_el' 2D elements
-
-
-    """
-    
-    # Change matrices depending on the number of elements to be printed
-    if num_o_el=="all":
-        # Number of elements, catch shape function error with one element 
-        num_o_el,__ = connect.shape
-    
-    else:
-        ## Control point change
-        # Connectivity matrix 
-        connect = connect[0:num_o_el,:]
-        # number of used coordinates
-        num_o_coor_n = np.max(connect)+1
-        X = X[0:num_o_coor_n]
-        Y = Y[0:num_o_coor_n]
-        
-        ## GLL point change
-        # Connectivity matrix
-        gll_connect = gll_connect[0:num_o_el,:]
-        # number of used coordinates
-        num_o_coor_gll = np.max(gll_connect)+1
-        gll_coordinates= gll_coordinates[0:num_o_coor_gll,:] 
-
-        
-        
-    ##########
-    # Calculate the Centre of elements
-    el_num_coor = np.zeros([num_o_el,2])
-    for i in range(num_o_el):
-        el_num_coor[i,0] = np.mean(X[connect[i,:]])
-        el_num_coor[i,1] = np.mean(Y[connect[i,:]])
-
-    ##########
-    # Creating polygons for each element
-    xy = np.array([X[:], Y[:]]).T
-    patches = []
-    for coords in xy[connect[:]]:
-        quad = Polygon(coords, True)
-        patches.append(quad)
-    
-    ##########
-    # Plotting 
-    fig,ax = plt.subplots()
-
-    # Plot Polygon Patches
-    colors = 100 * np.random.rand(len(patches))
-    p = PatchCollection(patches, cmap=matplotlib.cm.coolwarm,edgecolor="k", alpha=0.4)
-    p.set_array(np.array(colors))
-    ax.add_collection(p)
-
-    # GLL Points
-    ax.scatter(gll_coordinates[:,0],\
-            gll_coordinates[:,1],15,color="k", marker="x")
-    # Control Points
-    # alpha fill
-    ax.scatter(X, Y, 50, marker="o",
-                          edgecolor="None",
-                          color="k",
-                          linewidth=2,alpha=0.3)
-    # outline
-    ax.scatter(X, Y, 50, marker="o",
-                          edgecolor="k",
-                          color="None",
-                          linewidth=2)
-    
-    # Plot element number
-    if plot_el_num=="yes":
-        # Plot element number
-        for i in range(num_o_el):    
-            ax.text(el_num_coor[i,0], el_num_coor[i,1], "{0:d}".format(i+1),size=8,
-                 ha="right", va="top",
-                 bbox=dict(boxstyle="round",
-                           ec=(1., 0.5, 0.5),
-                           fc=(1., 0.8, 0.8),
-                           )
-                 )
-
-    # Plot element number
-    if plot_node_num=="yes":
-        # Plot element number
-        for i in range(num_o_coor_gll):    
-            ax.text(gll_coordinates[i,0], \
-                    gll_coordinates[i,1], "{0:d}".format(i+1),size=8,
-                    ha="left", va="bottom")
-
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.axis('equal')
-    if plot_axis=="no":
-        plt.axis("off")
-    else:
-        ax.legend(['GLL Points', 'Control Points'])
-        plt.title('Numbered elements, Nodes and GLL points')
-    
-
-def test_interp():
-    """test_interp()
-    
-    Test the functions of this suite and plots them subsequently.
-    """
-    
-    ngllx = 5
-    ngllz = 5
-
-
-    X,Y,Z,connect = readEx('../input/RectMesh.e')
-    gll_coordinates, gll_connect = mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
-
-    # Plotting 1 element
-    plot_elements(X,Z,connect,gll_coordinates,gll_connect,num_o_el=1,\
-                                plot_el_num="yes",plot_node_num="yes")
-
-    # Plotting 2 elements
-    plot_elements(X,Z,connect,gll_coordinates,gll_connect,num_o_el=2,\
-                                plot_el_num="yes",plot_node_num="yes",\
-                                plot_axis = "no")
-                           
-
-
-    # Plotting All elements
-    #plot_elements(X,Z,connect,gll_coordinates,gll_connect)
-
-
-    plt.show()
-
-if __name__ == "__main__":
-    test_interp()
-    
 
 
 
