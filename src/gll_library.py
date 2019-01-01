@@ -231,6 +231,39 @@ def Jacobian2D(dN,x):
     return np.matmul(dN,x)
 
 
+def dN_local_2D(xi,eta):
+    """.. function:: dN_local(xi,eta)
+
+    Computes the flattened Jacobian for each GLL point. Numbering as 
+    described in the documentation.
+
+    :param xi: ``numpy`` 1D array of collocation points in xi direction
+    :param eta: ``numpy`` 1D array of collocation points in eta direction
+
+    :rtype: ``numpy`` array of size [total ngll]x[2]x[total ngll]
+
+    Needs to be computed once the beginning since it is the same for all
+    elements. It's the derivative of each shape function in each 
+    dimension computed at each gll point of the element.
+
+    
+    """
+    # Inititalize the array
+    dN_local = np.zeros([len(xi)*len(eta),2,len(xi)*len(eta)])
+
+    # We fill this once and for all as this shall stay the same over all 
+    # elements
+    count = 0
+    for j in range(len(eta)):
+        for i in range(len(xi)):
+            dN_local[count,:,:] = lagrangeDerMat2D(xi[i],xi,\
+                                                       eta[j],eta)
+            count += 1
+
+    return dN_local
+
+
+
 #######################################################################
 ###                Global Derivatives                             ###
 #######################################################################
@@ -398,6 +431,49 @@ def gll_pw(N):
         raise NotImplementedError
 
     return np.array(xi), np.array(weights)
+
+def flattened_weights2D(w_xi,w_eta):
+    """..function:: flattened_Weights(xi,eta)
+    
+    This function flattens the weights into a 1D array.
+
+    :param xi: ``numpy`` 1D array of weights corresponding to 
+               collocation points in xi direction
+    :param eta: ``numpy`` 1D array of weights corresponding to
+                collocation points in eta direction
+
+    :rtype: ``numpy`` array of size 1x[len(xi)*len(eta)]
+    
+    Numbering of the weights follows the numbering scheme in the 
+    documentation.
+    
+    """
+
+    # Initialize empty array of Weights
+    W = np.zeros(len(w_xi)*len(w_eta))
+
+    # Flattening the Weights
+    counter = 0
+    for j in range(len(w_eta)):
+        for i in range(len(w_xi)):
+            W[counter] = w_xi[i]*w_eta[j]
+            counter += 1
+
+    return W
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #######################################################################
 ###                 Next function                                  ####

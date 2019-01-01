@@ -38,7 +38,20 @@ def readEx(name):
 
 
 def mesh_interp2D(X,Y,Z,connect,ngllx,nglly):
-    """mesh_interp(X,Y,Z,connect,ngllx,nglly)
+    """.. function :: mesh_interp(X,Y,Z,connect,ngllx,nglly)
+    
+    Creates new gll point mesh from initial control point mesh for 
+    variable accuracy vs. efficiency. 
+    
+    :param X: x coordinates in Nx1 ``numpy`` array
+    :param Y: y coordinates in Nx1 ``numpy`` array
+    :param Z: z coordinates in Nx1 ``numpy`` array
+    
+    :param connect: 1x[Number of control points] ``numpy`` array that
+                    defines the connectivity of each element
+    
+    :param ngllx: number of new gll points in xi direction
+    :param nglly: number of new gll points in eta direction
 
     Function takes in coordinates of meshgrid and its connectivity 
     matrix. Then, it interpolates the GLL points onto the global grid 
