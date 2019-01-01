@@ -25,8 +25,48 @@ class TestGLL(unittest.TestCase):
         # Testing the Values
         np.testing.assert_array_almost_equal(xi,np.array([-1,0,1]))
         np.testing.assert_array_almost_equal(weights,np.array([1/3,4/3,1/3]))
-
     
+    def testflattened_weights(self):
+        """Testing flattened_weights() which is found in 
+        src.gll_library. First test is for order 1 the second test for 
+        the order 2.
+        """
+
+        ####### 1 ########
+        # Setting Order
+        N = 1
+        
+        # Getting GLL Points and weights
+        xi, w_xi = src.gll_library.gll_pw(N)
+        eta, w_eta = src.gll_library.gll_pw(N)
+        
+        # computing the flattened weights
+        W = src.gll_library.flattened_weights2D(w_xi,w_eta)
+        
+        # Solution
+        W_Sol = np.array([1,1,1,1])
+
+        np.testing.assert_array_almost_equal(W,W_Sol)
+
+        
+        ####### 2 ########
+        # Setting Order
+        N = 2
+        
+        # Getting GLL Points and weights
+        xi, w_xi = src.gll_library.gll_pw(N)
+        eta, w_eta = src.gll_library.gll_pw(N)
+        
+        # computing the flattened weights
+        W = src.gll_library.flattened_weights2D(w_xi,w_eta)
+        
+        # Solution
+        W_Sol = np.array([1/9,4/9,1/9,4/9,16/9,4/9,1/9,4/9,1/9])
+
+        np.testing.assert_array_almost_equal(W,W_Sol)
+
+
+
     def testLagrange(self):
         """ Tests lagrange() from the gll_library
         First Test is first order, second test is second order polynomial
@@ -201,6 +241,33 @@ class TestGLL(unittest.TestCase):
 
         # Check whether correct:
         np.testing.assert_array_equal(dN_Sol,dNdxi)
+    
+
+    def testdN_local2D(self):
+        """Testing the dN derivative matrix evaluated at each gll point
+        """
+
+        ###### 1 ######
+        # Setting the order
+        N = 1
+
+        # Getting collocation points
+        xi,__ = src.gll_library.gll_pw(N)
+        eta,__ = src.gll_library.gll_pw(N)
+        
+        # Solution:
+        dN_Sol = np.array([[-0.5, 0.5, 0,   0],
+                           [-0.5, 0,   0.5, 0]])
+        # Print the derivative matrix
+        dN = src.gll_library.dN_local_2D(xi,eta)
+
+        # Check whether correct:
+        np.testing.assert_array_almost_equal(dN_Sol,dN[0,:,:])
+
+        
+
+
+
 
     def testJacobian2D(self):
         """Testing the Jacobian matrix multiplication Jacobian2D() from 
