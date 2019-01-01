@@ -205,15 +205,19 @@ class TestGLL(unittest.TestCase):
     def testJacobian2D(self):
         """Testing the Jacobian matrix multiplication Jacobian2D() from 
         src/gll_library.py. An arbitrary element setup is tested:
-                      
-            y                    ( x , y )
-            ^                     _     _
-         3  |    __--4           | 0 , 0 |
-         2  |  3-    |           | 3 , 1 |
-         1  |/___----2           | 1 , 2 |
-         0  1-----------> x      |_3 , 3_|  
-            0  1  2  3
         
+        ::
+
+                y                    ( x , y )
+                ^                     _     _
+             3  |    __--4           | 0 , 0 |
+             2  |  3-    |           | 3 , 1 |
+             1  |/___----2           | 1 , 2 |
+             0  1-----------> x      |_3 , 3_|  
+                0  1  2  3
+        
+
+
         """
  
         ###### 1 ######
@@ -266,6 +270,54 @@ class TestGLL(unittest.TestCase):
         np.testing.assert_array_equal(J2,J2_Sol)
         np.testing.assert_array_equal(J3,J3_Sol)
         np.testing.assert_array_equal(J4,J4_Sol)
+
+    def testGlobal_Derivative(self):
+        """Testing the global derivative function with the same element
+        setup as Jacobian test.
+
+        
+        ::
+
+                y                    ( x , y )
+                ^                     _     _
+             3  |    __--4           | 0 , 0 |
+             2  |  3-    |           | 3 , 1 |
+             1  |/___----2           | 1 , 2 |
+             0  1-----------> x      |_3 , 3_|  
+                0  1  2  3
+        
+
+
+        """
+ 
+        ###### 1 ######
+        # Setting the order
+        N = 1
+
+        # Getting collocation points
+        xi,__  = src.gll_library.gll_pw(N)
+        eta,__ = src.gll_library.gll_pw(N)
+        
+        # Creating arbitrary coordinate matrix as shown in description
+        x = np.array([[0,0],[3,1],[1,2],[3,3]])
+
+        # Computing shape function derivative matrices
+        xi1,eta1  = (-1,-1) # first node in reference element 
+        dNdxi = src.gll_library.lagrangeDerMat2D(xi1,xi,eta1,eta)
+
+        # Calculating Jacobian
+        Jacob = src.gll_library.Jacobian2D(dNdxi,x)
+
+        # Compute globale derivative
+        dNdx = src.gll_library.global_derivative(Jacob,dNdxi)
+
+        # Solution
+        dNdx_Sol =np.array([[-0.2, 0.4, -0.2,0 ],
+                            [-0.4,-0.2,  0.6,0 ]])
+
+        np.testing.assert_array_almost_equal(dNdx,dNdx_Sol)
+
+
 
     def testLegendre1D(self):
         """Testing legendre() from the gll_library
