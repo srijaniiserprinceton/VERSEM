@@ -7,13 +7,107 @@ import netCDF4
 
 # Plotting
 from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
+from  matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt
 import matplotlib
 
 # Import GLL library to get the lagrange polynomials for interpolation
 # of the grid
-import gll_library as gll
+import src.gll_library as gll
+
+
+
+def readUniformVelocity(input_mesh,outfilename):
+    """.. function testAssignPorperties()
+    
+    Saves ``.npy`` array file with  
+    ::
+    
+        Columns:    X Y Z rho vp vs
+    
+    """
+    
+    # Get XYZ coordinates of the mesh
+    X,Y,Z,connect = readEx(input_mesh)
+
+    # Uniform material for test
+    rho = 2700  # kg/m^3
+    vp  = 6500  # m/s 
+    vs  = 3750  # m/s
+
+    # Initialize empty array
+    prop = np.zeros([len(X),6])
+
+    # Populate property matrix
+    prop[:,0] = X
+    prop[:,1] = Y
+    prop[:,2] = Z
+    prop[:,3] = rho
+    prop[:,4] = vp
+    prop[:,5] = vs
+    
+    # Save materials to .npy file
+    np.save(outfilename,prop)
+
+
+def assProp():
+    """testning the property assignment"""
+    
+    ngllx = 5
+    ngllz = 5
+    X,Y,Z,connect = readEx('input/RectMesh.e')
+    gll_coordinates, gll_connect = \
+                            mesh_interp2D(X,Y,Z,connect,ngllx,ngllz)
+    
+    v_mod = 'input/vel_mod.npy'
+
+    # assign properties
+    prop = assignSeismicProperties(v_mod,gll_coordinates)
+
+
+def assignSeismicProperties(velocity_model,gll_coordinates):
+    """.. function:: assignSeismicProperties(name)
+    
+    Reads an ``.npy`` file that contains a ``numpy`` array with velocity 
+    model of the format
+    
+    ::
+    
+        Columns:    X Y Z rho vp vs
+
+    Then, it assigns the properties to the interpolated mesh using the 
+    nearest neighbour principle.
+
+    :param v_name: velocity model array specified as above.
+    :param gll_coordinates: coordinate matrix of the interpolated GLL
+                            points using the original matrix.
+        
+    :rtype: Nx3 ``numpy`` array with the seismic properties for each 
+            node in gll_coordinates
+
+    """
+    
+    # Load .npy file
+    v = np.load(velocity_model)
+
+    # Number of nodes
+    N = len(gll_coordinates[:,0])
+
+    # Initialize propertz matrix
+    prop = np.zeros([N,3])
+
+    # Check which coordinate is the closest to interpolated node in for 
+    # loop
+
+    for i in range(N):
+        # Here for now only 2D
+        dist = np.sqrt( (v[:,0]-gll_coordinates[i,0])**2  
+                        + (v[:,2]-gll_coordinates[i,1])**2)
+        index = np.argmin(dist)
+        prop[i,:] = v[index,3::]
+
+    return prop
+
 
 
 def readEx(name):
@@ -228,6 +322,7 @@ def plot_elements(X,Y,connect,gll_coordinates,gll_connect,\
         el_num_coor[i,0] = np.mean(X[connect[i,:]])
         el_num_coor[i,1] = np.mean(Y[connect[i,:]])
 
+
     ##########
     # Creating polygons for each element
     xy = np.array([X[:], Y[:]]).T
@@ -235,7 +330,8 @@ def plot_elements(X,Y,connect,gll_coordinates,gll_connect,\
     for coords in xy[connect[:]]:
         quad = Polygon(coords, True)
         patches.append(quad)
-    
+
+
     ##########
     # Plotting 
     fig,ax = plt.subplots()
