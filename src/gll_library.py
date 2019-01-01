@@ -235,7 +235,7 @@ def Jacobian2D(dN,x):
 ###                Global Derivatives                             ###
 #######################################################################
 
-def global_derivative(jacob,dNxi):
+def global_derivative(jacob,dNdxi):
     """.. function:: global_derivative(jacob, dN)
 
     This function computes the global derivatives from the local shape
@@ -247,8 +247,8 @@ def global_derivative(jacob,dNxi):
     :param dNdxi: local shapefunction derivative ``numpy`` array of size
                   [dim]x[total Number of GLL points]
 
-    :rtype dNdx: global shapefunction derivative ``numpy`` array of size
-                 [dim]x[total Number of GLL points]
+    :rtype: global shapefunction derivative ``numpy`` array of size
+            [dim]x[total Number of GLL points].
 
     The global derivative is needed for the GLL quadrature on element
     level.
@@ -260,7 +260,13 @@ def global_derivative(jacob,dNxi):
         \\frac{d}{dx} = J^{-1} \\frac{d}{d\\xi}
 
     """
-    pass
+    # One liner since it's a simple inversion and matrix multiplication
+    #                    J^(-1)      * dNdxi 
+    print(np.linalg.inv(jacob))
+    print(dNdxi)
+    return np.matmul(np.linalg.inv(jacob),dNdxi)
+
+
 
 #######################################################################
 ###                Legendre Polynomials                             ###
