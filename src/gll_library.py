@@ -41,7 +41,6 @@ def lagrange2D(i,x,xi,j,y,eta):
     """.. function:: lagrange2D(i,x,xi,j,y,eta)
      
     Computes the lagrange polynomial in two dimensions 
-
     :param i: polynomial number 0-th dimension
     :param x: location of evalutation 0-th dimension
     :param xi: collocation points 0-th dimension
@@ -219,8 +218,8 @@ def Jacobian2D(dN,x):
     local element coordinates
 
     :param dN: shape function derivative matrix (``numpy``)
-               [dim]x[Number of GLL points]
-    :param x: global node coordinates [dim]x[Number of GLL points]
+               [dim]x[total Number of GLL points]
+    :param x: global node coordinates [dim]x[total Number of GLL points]
               (``numpy``)
     
     :rtype: ``numpy`` [dim]x[dim] array
@@ -232,6 +231,36 @@ def Jacobian2D(dN,x):
     return np.matmul(dN,x)
 
 
+#######################################################################
+###                Global Derivatives                             ###
+#######################################################################
+
+def global_derivative(jacob,dNxi):
+    """.. function:: global_derivative(jacob, dN)
+
+    This function computes the global derivatives from the local shape
+    function derivates.
+
+    :param jacob: the [dim]x[dim] ``numpy`` array containing the 
+                  Jacobian transformation matrix.
+
+    :param dNdxi: local shapefunction derivative ``numpy`` array of size
+                  [dim]x[total Number of GLL points]
+
+    :rtype dNdx: global shapefunction derivative ``numpy`` array of size
+                 [dim]x[total Number of GLL points]
+
+    The global derivative is needed for the GLL quadrature on element
+    level.
+    
+    The algorithm is simple since
+    
+    .. math::
+        
+        \\frac{d}{dx} = J^{-1} \\frac{d}{d\\xi}
+
+    """
+    pass
 
 #######################################################################
 ###                Legendre Polynomials                             ###
