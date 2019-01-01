@@ -78,6 +78,12 @@ def assignSeismicProperties(velocity_model,gll_coordinates):
         
     :rtype: Nx3 ``numpy`` array with the seismic properties for each 
             node in gll_coordinates
+    ::
+        
+        Columns     rho vp vs
+    
+    I think this should be correct.
+
 
     """
     
