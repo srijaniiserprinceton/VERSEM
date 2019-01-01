@@ -262,8 +262,6 @@ def global_derivative(jacob,dNdxi):
     """
     # One liner since it's a simple inversion and matrix multiplication
     #                    J^(-1)      * dNdxi 
-    print(np.linalg.inv(jacob))
-    print(dNdxi)
     return np.matmul(np.linalg.inv(jacob),dNdxi)
 
 
