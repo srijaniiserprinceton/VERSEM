@@ -1,5 +1,7 @@
+"""Package __init__.py docstring"""
 # Import packages:
-from .gll_library import gll_pw
-from .gll_library import lagrange
-from .gll_library import lagrange2D
+from src import gll_library
+from src import mesh_spec
+
 from .loc2glob import local2global
+
