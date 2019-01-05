@@ -1,5 +1,5 @@
 """Test for force term"""
-from context import src
+from .context import src
 import unittest
 
 import numpy as np
