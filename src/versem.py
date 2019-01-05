@@ -2,6 +2,7 @@ import numpy as np
 import gll_library as gll
 import mesh_spec as mesh
 import el_mass_matrix as el_mass
+import el_stiffness_matrix as el_stiff
 import loc2glob as l2g
 
 #In the final version, these should come from the input file.
@@ -13,6 +14,11 @@ nelm_x = 20
 nelm_y = 1
 nelm_z = 10
 velocity_model = '../input/vel_mod.npy'
+dim = 2
+
+#The lambda and mu flattened matrices
+lmd = np.ones(len(gll_coords_el))
+mu = np.ones(len(gll_coords_el))
 
 ngll_el = ngll_x*ngll_y*ngll_z
 el_no = nelm_x*nelm_y*nelm_z
@@ -37,7 +43,15 @@ dN_local = gll.dN_local_2D(xi,eta)
 
 #The mass matrix => Computed only once if rho is constant in time.
 #Mglob_mass = np.zeros([len(gll_coordinates),len(gll_coordinates)])
-Mglob_mass = el_mass.glob_el_mass_mat(el_no,ngll_el,gll_coordinates,gll_connect,rho,dN_local,W)
+Mglob_mass = el_mass.glob_el_mass_mat(gll_coordinates,gll_connect,rho,dN_local,W)
+
+#The stiffness matrix => Computed only once.
+#We divide into three parts for ease of formulation and coding
+comp = 0
+Mglob_A,Mglob_B,Mglob_C = el_stiff.glob_el_stiff_mat(gll_coordinates,gll_connect,dN_local,W,comp,dim,lmd,mu)
+
+
+
 
 
 
