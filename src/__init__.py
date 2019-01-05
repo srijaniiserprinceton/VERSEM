@@ -5,3 +5,6 @@ from . import mesh_spec
 
 from . import force
 from . import loc2glob
+from . import force
+from .loc2glob import local2global
+
