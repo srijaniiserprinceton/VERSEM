@@ -1,4 +1,4 @@
-from context import src
+from .context import src
 import unittest
 import numpy as np
 
@@ -9,7 +9,7 @@ node_num = np.array([[4,1,2,5],[5,2,3,6],[7,4,5,8]])-1
 el_no = np.array(range(0,len(node_num)))
 
 for i in el_no:
-    Mg += src.local2global(Me,Mg,node_num,[i])
+    Mg += src.loc2glob.local2global(Me,Mg,node_num,[i])
 
 print(Mg)
 
