@@ -34,7 +34,7 @@ class testLoc2Glob(unittest.TestCase):
         el_no = np.array(range(0,len(node_num)))
 
         for i in el_no:
-            Mg += src.local2global(Me,Mg,node_num,[i])
+            Mg += src.loc2glob.local2global(Me,Mg,node_num,[i])
 
         Mg_Sol = np.array([[1., 1., 1., 1., 0., 0.],
                            [1., 2., 1., 2., 1., 1.],
