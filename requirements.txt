@@ -10,3 +10,6 @@ sphinx_rtd_theme
 pytest
 py
 pluggy
+
+# Exodus reading
+netcdf4
