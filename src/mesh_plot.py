@@ -4,7 +4,7 @@
 import numpy as np
 
 # imports from mesh_spec.py
-from mesh_spec import *
+from .mesh_spec import *
 
 
 # Plotting
@@ -15,7 +15,8 @@ import matplotlib
 
 # Import GLL library to get the lagrange polynomials for interpolation
 # of the grid
-import gll_library as gll
+from . import gll_library as gll
+
 
 
 def plot_elements(X,Y,connect,gll_coordinates,gll_connect,\
