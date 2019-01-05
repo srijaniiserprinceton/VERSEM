@@ -3,8 +3,6 @@ import unittest
 import numpy as np
 
 
-
-
 class TestGLL(unittest.TestCase):
     """ Testing functions of the gll_library 
     - Gauss-Lobatto-Legendre points and weights
